@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#245de7">
+  <meta name="description" content="COLMO 八维人格与六类 AI 表达策略的交互式工作坊。">
+  <title>COLMO · 人格表达实验台</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="data.js"></script>
+  <script defer src="scales.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="wordmark" href="#" aria-label="COLMO 人格表达实验台">COLMO<span>人格与表达策略</span></a>
+    <div class="toolbar"><span class="save-state" id="saveState">工作坊草稿</span><button id="importButton" class="quiet">导入参数</button><button id="exportButton" class="primary">导出参数 <span aria-hidden="true">↗</span></button><input id="importFile" type="file" accept="application/json,.json" hidden></div>
+  </header>
+  <main>
+    <h1 class="sr-only">COLMO 人格与表达策略</h1>
+    <nav id="strategyTabs" class="strategy-tabs" aria-label="选择人格原型或表达策略"></nav>
+    <section id="strategyContext" class="panel strategy-context" aria-labelledby="contextTitle">
+      <div class="context-heading"><span id="contextLetter" class="context-letter"></span><h2 id="contextTitle"></h2></div>
+      <p id="contextPurpose" class="context-purpose"></p>
+      <div class="context-columns">
+        <div><span id="contextDefinitionLabel" class="context-tag">口语化定义</span><p id="contextDefinition"></p></div>
+        <div><span class="context-tag">案例</span><p id="contextExample"></p></div>
+        <div><span class="context-tag">边界</span><p id="contextBoundary"></p></div>
+      </div>
+    </section>
+    <section class="workspace">
+      <div class="chart-column">
+        <section class="panel chart-panel" aria-labelledby="chartHeading">
+          <div class="panel-head"><div><h2 id="chartHeading">八维表达轮廓</h2></div></div>
+          <div class="chart-options"><label class="switch"><input type="checkbox" id="compareToggle" checked><span></span>对比人格原型</label><label class="switch"><input type="checkbox" id="envelopeToggle"><span></span>原型允许范围</label></div>
+          <div class="radar-wrap"><svg id="radar" viewBox="0 0 640 590" role="group" aria-labelledby="radarTitle radarDescription"><title id="radarTitle">八维人格表达雷达图</title><desc id="radarDescription"></desc><g id="rangeLayer"></g><g id="gridLayer"></g><g id="baselineLayer"></g><g id="activeLayer"></g><g id="labelLayer"></g></svg></div>
+          <div id="detailLegend" class="legend"><span><i class="key-active"></i><b id="activeLegend">当前策略</b></span><span id="baseLegend"><i class="key-base"></i>原型中心</span><span id="bandLegend" hidden><i class="key-band"></i>策略上下限</span></div>
+          <div id="overviewLegend" class="overview-legend" hidden></div>
+        </section>
+
+      </div>
+      <section id="overviewPanel" class="panel overview-panel" aria-labelledby="overviewHeading" hidden>
+        <div class="panel-head"><h2 id="overviewHeading">人格原型与六类策略</h2><label class="switch all-strategies-switch"><input id="allStrategiesToggle" type="checkbox" checked aria-label="显示全部策略"><span></span><b id="allStrategiesState">全部显示</b></label></div>
+        <div class="overview-prototype"><span>COLMO 人格原型</span><h3>理性、专业、克制的高端管家</h3><p>以专业判断提供有分寸的照料，尊重用户选择。六类策略按服务目的调整表达，保持在同一人格范围内。</p></div>
+        <div class="overview-list" id="overviewList"></div>
+      </section>
+      <section id="editorPanel" class="panel editor-panel" aria-labelledby="editorTitle">
+        <div class="panel-head"><div><h2 id="editorTitle">调整八维策略</h2></div><button id="resetButton" class="quiet reset-button">↺ 重置本页</button></div>
+        <div class="editor-meta"><span id="editorHint">拖动圆点或点击刻度，左侧实时同步。</span><div class="category-keys"><span class="appearance">形象表达</span><span class="communication">沟通表达</span><span class="action">行动方式</span></div></div>
+        <div id="axesEditor"></div>
+        <p class="scale-source">刻度含义与情境：<a href="https://www.figma.com/design/H3Ve4kkJF3QuIETEv5bLzy?node-id=1070-2" target="_blank" rel="noopener noreferrer">01 形象表达与行动方式 ↗</a> · <a href="https://www.figma.com/design/H3Ve4kkJF3QuIETEv5bLzy?node-id=1070-3" target="_blank" rel="noopener noreferrer">02 沟通表达 ↗</a></p>
+        <div class="editor-footer"><span id="changeCount">与人格原型相比，0 个维度变化</span><span id="storageNote">修改自动保存在当前浏览器</span></div>
+      </section>
+    </section>
+    <footer class="page-footer"><span>COLMO <b>·</b> AI 人格表达工作坊</span><button class="text-button" id="helpButton">如何放到 GitHub？</button></footer>
+  </main>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <dialog id="helpDialog"><div class="dialog-head"><h2>从本地网页到分享链接</h2><button id="closeHelp" class="quiet" aria-label="关闭">✕</button></div><p>Git 保存版本，GitHub 存放代码，GitHub Pages 把它变成可访问的网页。</p><ol><li>在 GitHub 新建仓库，例如 <code>colmo-persona-lab</code>。</li><li>用 <strong>Add file → Upload files</strong> 上传网页文件夹内的文件，确保 <code>index.html</code> 位于仓库根目录。</li><li>在 <strong>Settings → Pages</strong> 中选择 <strong>Deploy from a branch → main → / (root)</strong>，保存后等待生成访问链接。</li></ol><p class="small">发布的是文件中的默认值。工作坊里编辑的参数只保存在本机；请导出 JSON 交给其他人导入。发布前确认仓库与网页的可见范围。</p><a href="https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site" target="_blank" rel="noopener noreferrer">查看 GitHub 官方说明 ↗</a></dialog>
+</body>
+</html>

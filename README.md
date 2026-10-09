@@ -1,0 +1,90 @@
+# COLMO · 人格表达实验台
+
+一个可以直接打开、可部署到 GitHub Pages 的静态 HTML 网页。没有构建步骤、运行依赖、后端或外部字体。
+
+## 本地打开
+
+双击 `index.html` 即可。保持 `index.html`、`styles.css`、`data.js`、`scales.js`、`app.js`、`favicon.svg` 在同一个文件夹中。
+
+也可以在此文件夹启动本地服务器：
+
+```sh
+python3 -m http.server 4173
+```
+
+然后访问 <http://localhost:4173>。
+
+## 怎么用
+
+- 默认进入“总览”：左侧叠加六类策略当前参数，点击下方各类图例可显示或隐藏；右侧为人格原型与六类介绍，点击分类标题进入该策略。
+- 单类策略先呈现定义、案例与边界，下方为雷达图和调值轴线。A–F 的颜色在总览、标签与单类图中保持一致。
+
+- 顶部切换人格原型或 A–F 六类策略。雷达轮廓在切换时平滑过渡。
+- 左侧可开关原型中心对比、原型允许范围。普通策略和原型中心不填充，D 类只填上下限之间的区间。
+- 右侧拖动滑块调值。D 类上下限分别编辑。
+- 悬停横轴刻度或雷达图上的刻度点查看含义与情境；鼠标离开刻度即隐藏。直接点击刻度或拖动滑块调值。卡片仅展示信息，无操作按钮。D 类点击刻度时调整最近的端点，也可分别拖动上下限滑块。手机端点击刻度即可调值并查看说明。原型范围外的刻度可阅读但不可应用。按 Escape 或点击空白处关闭。
+- 人格原型页可以编辑中心与允许上下限；收窄范围时，超出范围的策略值会同步收敛并显示提示。
+- 点击维度旁的 `?` 查看定义和原型依据。
+- “重置本页”只重置当前页（原型范围重置时也会使策略值回到允许范围内）。
+- 修改自动保存至当前浏览器。导出 JSON 可以保存工作坊成果，其他人使用“导入参数”载入。
+- 浏览器草稿不会自动更新 GitHub 上的默认值，也不会自动同步给其他访问者。默认值位于 `data.js`。
+
+## 第一次放到 GitHub：无需命令行
+
+1. 登录 [GitHub](https://github.com)，创建仓库，例如 `colmo-persona-lab`。
+2. 进入仓库 → **Add file → Upload files**。上传本文件夹内的文件，使 `index.html` 位于仓库根目录，而不是嵌套在另一个文件夹内。点击 **Commit changes** 保存。
+3. 仓库 → **Settings → Pages → Build and deployment**。
+4. Source 选择 **Deploy from a branch**；Branch 选择 **main**，目录选择 **/ (root)**，点击 **Save**。
+5. 等待发布完成，Pages 设置页会显示访问地址，通常是 `https://你的用户名.github.io/colmo-persona-lab/`。
+
+仓库和网页的可见性请按项目的分享范围设置。可用的 Pages 选项取决于 GitHub 账户与仓库设置。
+
+官方操作说明：[创建 GitHub Pages 站点](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site)、[配置发布来源](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)。
+
+## 如果后续要用 Git 管理版本
+
+建议从 GitHub 把这个独立仓库克隆到新的文件夹，不要把整个人格化研究资料目录上传。
+
+```sh
+git clone https://github.com/你的用户名/colmo-persona-lab.git
+cd colmo-persona-lab
+```
+
+修改网页文件后：
+
+```sh
+git add index.html styles.css data.js scales.js app.js favicon.svg README.md
+git commit -m "Update COLMO expression workshop"
+git push
+```
+
+## 八维数据口径
+
+刻度为序数，不是评分；不同维度的 L1 含义不同。介入深度使用 D0–D5。雷达图对每根轴独立归一化，最低刻度放在内环，避免 D0 被误认为没有数据。
+
+| 维度 | 原型中心 | 允许范围 | A | B | C | D | E | F |
+|---|---|---|---|---|---|---|---|---|
+| 生命具象化程度 | L3 | L1–L3 | L3 | L3 | L1 | L1 | L3 | L3 |
+| 表达强度 | L2 | L1–L3 | L2 | L2 | L2 | L2–L3 | L2 | L2 |
+| 感知能力 / 专业感 | L3 | L2–L4 | L3 | L3 | L2 | L3 | L3 | L4 |
+| 表达温度 | L2 | L1–L2 | L2 | L2 | L2 | L1–L2 | L2 | L2 |
+| 表达密度 | L2 | L1–L3 | L2 | L3 | L2 | L2–L3 | L3 | L3 |
+| 用户引导力度 | L3 | L2–L4 | L2 | L3 | L3 | L2–L4 | L2 | L3 |
+| 非请求式介入阈值 | L2 | L1–L3 | L1 | L2 | L2 | L2–L3 | L2 | L1 |
+| 介入深度 | D3 | D0–D4 | D0 | D1 | D3 | D0–D4 | D0 | D3 |
+
+数据沿用已确认的 COLMO 八维轴线页（人格原型及 A–F 策略）；网页使用明确的语义刻度，不将 Figma 椭圆的装饰性边缘宽度当作新增的小数刻度。D 类保留风险分级带来的区间，不把最高风险概括为所有异常的表达方式。
+
+原型依据：COLMO《语音形象设计规范手册》V1.0（2025）；《语音助手人设及对话规范》QMF-GC00.0044—2022；《超拟人 TTS 人声标准》。网页只保留项目中已使用的简要依据，不包含原规范文件。
+
+## 文件说明
+
+- `index.html`：页面结构。
+- `styles.css`：桌面与手机布局、交互样式。
+- `data.js`：维度定义、默认刻度、六类定义与边界。
+- `scales.js`：Figma「人格维度定义」01 / 02 中的 36 个刻度名称、含义与情境。更新定义时修改此文件；不会覆盖浏览器保存的参数。
+- `app.js`：雷达动画、编辑、约束、浏览器保存、JSON 导入导出。
+- `favicon.svg`：网站图标。
+- `.nojekyll`：GitHub Pages 静态发布标记。
+
+键盘可用 Tab 定位滑块、方向键调整；系统启用“减少动态效果”时，关闭雷达动画。导入文件会验证维度数量、刻度范围、上下限顺序以及策略与原型范围的一致性。
