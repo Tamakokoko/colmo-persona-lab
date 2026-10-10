@@ -42,6 +42,8 @@
   function createTabs(){for(const key of ids){
     const button=document.createElement('button');button.className='tab';button.dataset.key=key;
     button.style.setProperty('--strategy-color',strategyColors[key]||'#245de7');
+    button.setAttribute('aria-label',key==='overview'?'总览':key==='prototype'?'人格原型':key+' '+catalog.strategies[key].title);
+    button.title=key==='overview'?'总览':key==='prototype'?'人格原型':key+' '+catalog.strategies[key].title;
     button.innerHTML='<span class="tab-code">'+(key==='overview'?'▦':key==='prototype'?'◎':key)+'</span><span class="tab-label">'+(key==='overview'?'总览':key==='prototype'?'人格原型':catalog.strategies[key].short)+'</span>';
     button.addEventListener('click',()=>select(key));$('strategyTabs').append(button);
   }updateTabs();}

@@ -17,9 +17,10 @@
     <a class="wordmark" href="#" aria-label="COLMO 人格表达实验台">COLMO<span>人格与表达策略</span></a>
     <div class="toolbar"><span class="save-state" id="saveState">工作坊草稿</span><button id="importButton" class="quiet">导入参数</button><button id="exportButton" class="primary">导出参数 <span aria-hidden="true">↗</span></button><input id="importFile" type="file" accept="application/json,.json" hidden></div>
   </header>
+  <div class="app-shell">
+    <aside class="sidebar"><nav id="strategyTabs" class="strategy-tabs" aria-label="选择人格原型或表达策略"></nav></aside>
   <main>
     <h1 class="sr-only">COLMO 人格与表达策略</h1>
-    <nav id="strategyTabs" class="strategy-tabs" aria-label="选择人格原型或表达策略"></nav>
     <section id="strategyContext" class="panel strategy-context" aria-labelledby="contextTitle">
       <div class="context-heading"><span id="contextLetter" class="context-letter"></span><h2 id="contextTitle"></h2></div>
       <p id="contextPurpose" class="context-purpose"></p>
@@ -60,6 +61,7 @@
     </section>
     <footer class="page-footer"><span>COLMO <b>·</b> AI 人格表达工作坊</span><button class="text-button" id="helpButton">如何放到 GitHub？</button></footer>
   </main>
+  </div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <dialog id="helpDialog"><div class="dialog-head"><h2>从本地网页到分享链接</h2><button id="closeHelp" class="quiet" aria-label="关闭">✕</button></div><p>Git 保存版本，GitHub 存放代码，GitHub Pages 把它变成可访问的网页。</p><ol><li>在 GitHub 新建仓库，例如 <code>colmo-persona-lab</code>。</li><li>用 <strong>Add file → Upload files</strong> 上传网页文件夹内的文件，确保 <code>index.html</code> 位于仓库根目录。</li><li>在 <strong>Settings → Pages</strong> 中选择 <strong>Deploy from a branch → main → / (root)</strong>，保存后等待生成访问链接。</li></ol><p class="small">发布的是文件中的默认值。工作坊里编辑的参数只保存在本机；请导出 JSON 交给其他人导入。发布前确认仓库与网页的可见范围。</p><a href="https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site" target="_blank" rel="noopener noreferrer">查看 GitHub 官方说明 ↗</a></dialog>
 </body>
