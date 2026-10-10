@@ -244,8 +244,25 @@
     document.querySelector('.workspace').classList.toggle('is-overview',overview);
     document.documentElement.style.setProperty('--strategy-color',strategyColors[key]||'#245de7');
     if(overview){$('compareToggle').disabled=false;$('radarTitle').textContent='六类策略八维雷达图总览';drawOverview();return;}
+    $('contextRationale').hidden=key==='prototype';
+    $('contextDimensionChange').textContent=key==='prototype'?'':catalog.strategies[key].dimensionChange;
     const proto=key==='prototype',risk=key==='D';$('activeLegend').textContent=proto?'原型中心':key+' · '+catalog.strategies[key].short;$('baseLegend').hidden=proto||!$('compareToggle').checked;$('bandLegend').hidden=!risk;$('compareToggle').disabled=proto;$('editorTitle').textContent=proto?'人格原型':key+' · '+catalog.strategies[key].title;$('editorHint').textContent='悬停查看含义 · 点击或拖动调值';
-    $('contextLetter').textContent=proto?'◎':key;$('contextTitle').textContent=proto?'理性、专业、克制的高端管家':catalog.strategies[key].title;$('contextPurpose').hidden=proto;$('contextPurpose').textContent=proto?'':catalog.strategies[key].purpose;$('contextDefinitionLabel').textContent=proto?'定义':'口语化定义';$('contextDefinition').textContent=proto?'以专业判断提供有分寸的照料。人格原型具有稳定中心，也允许表达随服务目的轻微变化。':'“'+catalog.strategies[key].spoken+'”';$('contextExample').textContent=proto?'“只有在你需要的时候才会出现。”':'“'+catalog.strategies[key].example+'”';$('contextBoundary').textContent=proto?'日常保持克制，尊重用户选择；环境风险确认后，可以执行必要保护并说明处置。':catalog.strategies[key].boundary;$('radarTitle').textContent=(proto?'COLMO 人格原型':key+' '+catalog.strategies[key].title)+'八维雷达图';$('radarDescription').textContent=axes.map((axis,i)=>{const[l,h]=selectedBounds(i);return axis.name+' '+levelName(i,l)+(l!==h?' 至 '+levelName(i,h):'');}).join('；');renderEditor();transition();
+    $('contextLetter').textContent=proto?'◎':key;
+    $('contextTitle').textContent=proto?'理性、专业、克制的高端管家':catalog.strategies[key].title;
+    $('prototypeIntroduction').hidden=!proto;
+    $('contextColumns').hidden=proto;
+    $('contextPurpose').hidden=proto;
+    $('contextPurpose').textContent=proto?'':catalog.strategies[key].purpose;
+    if(!proto){
+      const strategy=catalog.strategies[key];
+      $('contextDefinitionLabel').textContent='口语化定义';
+      $('contextDefinition').textContent='“'+strategy.spoken+'”';
+      $('contextExample').textContent='“'+strategy.example+'”';
+      $('contextBoundary').textContent=strategy.boundary;
+    }
+    $('radarTitle').textContent=(proto?'COLMO 人格原型':key+' '+catalog.strategies[key].title)+'八维雷达图';
+    $('radarDescription').textContent=axes.map((axis,i)=>{const[l,h]=selectedBounds(i);return axis.name+' '+levelName(i,l)+(l!==h?' 至 '+levelName(i,h):'');}).join('；');
+    renderEditor();transition();
   }
   function syncAllStrategiesToggle(){
     const count=visibleStrategies.size,total=Object.keys(catalog.strategies).length;
