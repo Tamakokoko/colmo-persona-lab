@@ -5,9 +5,10 @@
   const scales = window.COLMO_SCALES;
   axes.forEach(axis => { axis.definition = scales[axis.id].definition; });
   const clone = value => JSON.parse(JSON.stringify(value));
-  const defaults = {version:1,baseline:clone(catalog.baseline),strategies:Object.fromEntries(Object.entries(catalog.strategies).map(([key,s]) => [key, key === 'D' ? {low:[...s.low],high:[...s.high]} : {values:[...s.values]}]))};
+  const defaults = {version:2,baseline:clone(catalog.baseline),strategies:Object.fromEntries(Object.entries(catalog.strategies).map(([key,s]) => [key, key === 'D' ? {low:[...s.low],high:[...s.high]} : {values:[...s.values]}]))};
   const $ = id => document.getElementById(id);
-  const STORAGE_KEY = 'colmo-persona-lab-v1';
+  const STORAGE_KEY = 'colmo-persona-lab-v2';
+  const LEGACY_STORAGE_KEY = 'colmo-persona-lab-v1';
   const ids = ['overview','prototype', ...Object.keys(catalog.strategies)];
   let state = clone(defaults), active = 'A', visual = null, animation = 0, saveTimer = 0, toastTimer = 0;
   let storageAvailable = true;
@@ -23,7 +24,7 @@
   function svgNode(tag,attrs,parent) { const n=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,v);if(parent)parent.appendChild(n);return n; }
   function toast(text) { clearTimeout(toastTimer);$('toast').textContent=text;$('toast').classList.add('show');toastTimer=setTimeout(()=>$('toast').classList.remove('show'),3200); }
   function validate(data) {
-    if(!data || data.version!==1 || !data.baseline || !data.strategies) throw new Error('文件格式不匹配，请选择本网页导出的 JSON。');
+    if(!data || ![1,2].includes(data.version) || !data.baseline || !data.strategies) throw new Error('文件格式不匹配，请选择本网页导出的 JSON。');
     const check = values => {if(!Array.isArray(values)||values.length!==8||values.some((v,i)=>!Number.isInteger(v)||v<axes[i].min||v>axes[i].max))throw new Error('参数必须是八个有效的整数刻度。');};
     for(const field of ['center','low','high']) check(data.baseline[field]);
     for(let i=0;i<8;i++)if(data.baseline.low[i]>data.baseline.center[i]||data.baseline.center[i]>data.baseline.high[i])throw new Error('原型中心必须位于允许范围内。');
@@ -32,10 +33,23 @@
       for(const field of key==='D'?['low','high']:['values']){check(s[field]);if(s[field].some((v,i)=>v<data.baseline.low[i]||v>data.baseline.high[i]))throw new Error('策略 '+key+' 超出了原型允许范围。');}
       if(key==='D'&&s.low.some((v,i)=>v>s.high[i]))throw new Error('风险策略的下限不能高于上限。');
     }
-    return {version:1,baseline:{center:[...data.baseline.center],low:[...data.baseline.low],high:[...data.baseline.high]},strategies:Object.fromEntries(Object.keys(catalog.strategies).map(key=>[key,key==='D'?{low:[...data.strategies.D.low],high:[...data.strategies.D.high]}:{values:[...data.strategies[key].values]}]))};
+    // v1 used L1 high → L4 low. Convert values and swap interval ends together.
+    if(data.version === 1) {
+      data = clone(data);
+      const reverseRange = range => {
+        [range.low[6],range.high[6]] = [5-range.high[6],5-range.low[6]];
+      };
+      reverseRange(data.baseline);
+      data.baseline.center[6] = 5-data.baseline.center[6];
+      for(const key of Object.keys(catalog.strategies)) {
+        if(key === 'D') reverseRange(data.strategies[key]);
+        else data.strategies[key].values[6] = 5-data.strategies[key].values[6];
+      }
+    }
+    return {version:2,baseline:{center:[...data.baseline.center],low:[...data.baseline.low],high:[...data.baseline.high]},strategies:Object.fromEntries(Object.keys(catalog.strategies).map(key=>[key,key==='D'?{low:[...data.strategies.D.low],high:[...data.strategies.D.high]}:{values:[...data.strategies[key].values]}]))};
   }
   let loadMessage='';
-  try {const cached=localStorage.getItem(STORAGE_KEY);if(cached)state=validate(JSON.parse(cached));}catch(e){loadMessage='未能读取本机草稿，已载入默认值。';}
+  try {const cached=localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(LEGACY_STORAGE_KEY);if(cached)state=validate(JSON.parse(cached));}catch(e){loadMessage='未能读取本机草稿，已载入默认值。';}
   function save() { clearTimeout(saveTimer);$('saveState').textContent='正在保存…';saveTimer=setTimeout(()=>{try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));$('saveState').textContent='已保存至本机';}catch(e){storageAvailable=false;$('saveState').textContent='请导出保存';$('storageNote').textContent='浏览器存储不可用，请导出参数';}},250); }
   function modified(key) {if(key==='overview')return false;return JSON.stringify(key==='prototype'?state.baseline:state.strategies[key])!==JSON.stringify(key==='prototype'?defaults.baseline:defaults.strategies[key]);}
   function updateTabs(){document.querySelectorAll('.tab').forEach(button=>{button.setAttribute('aria-pressed',String(button.dataset.key===active));button.classList.toggle('modified',modified(button.dataset.key));});}
