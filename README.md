@@ -4,7 +4,7 @@
 
 ## 本地打开
 
-双击 `index.html` 即可。保持 `index.html`、`styles.css`、`data.js`、`scales.js`、`app.js`、`favicon.svg` 在同一个文件夹中。
+双击 `index.html` 即可。保持 `index.html`、`styles.css`、`data.js`、`scales.js`、`app.js`、`cases.js`、`case-ui.js`、`favicon.svg`、`case-assets.js` 在同一个文件夹中。
 
 也可以在此文件夹启动本地服务器：
 
@@ -28,6 +28,8 @@ python3 -m http.server 4173
 - “重置本页”只重置当前页（原型范围重置时也会使策略值回到允许范围内）。
 - 修改自动保存至当前浏览器。导出 JSON 可以保存工作坊成果，其他人使用“导入参数”载入。
 - 浏览器草稿不会自动更新 GitHub 上的默认值，也不会自动同步给其他访问者。默认值位于 `data.js`。
+
+- 点击“八维表达”卡片右上角的“案例参考”查看当前分类案例；可在弹窗内切换六类，底部链接打开官方来源。
 
 ## 第一次放到 GitHub：无需命令行
 
@@ -53,7 +55,7 @@ cd colmo-persona-lab
 修改网页文件后：
 
 ```sh
-git add index.html styles.css data.js scales.js app.js favicon.svg README.md
+git add index.html styles.css data.js scales.js app.js cases.js case-ui.js case-assets.js favicon.svg README.md
 git commit -m "Update COLMO expression workshop"
 git push
 ```
@@ -84,6 +86,9 @@ git push
 - `data.js`：维度定义、默认刻度、六类定义与边界。
 - `scales.js`：Figma「人格维度定义」01 / 02 中的 36 个刻度名称、含义与情境。更新定义时修改此文件；不会覆盖浏览器保存的参数。
 - `app.js`：雷达动画、编辑、约束、浏览器保存、JSON 导入导出。
+- `cases.js`：六类竞品案例、策略贡献与官方来源。
+- `case-ui.js`：案例弹窗、分类切换和刻度映射。
+- `case-assets.js`：内嵌的 Figma 品牌标签与刻度素材，随网页发布。
 - `favicon.svg`：网站图标。
 - `.nojekyll`：GitHub Pages 静态发布标记。
 
