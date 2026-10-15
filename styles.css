@@ -264,3 +264,9 @@ main{width:100%;max-width:none;min-width:0;padding:16px 20px 0;margin:0}
  .case-sources a {flex-wrap:wrap;gap:4px 10px}.case-sources a small {display:none}
 }
 @media(max-width:420px) {.case-brand {width:90px;transform:scale(.7)}.case-title-row {gap:9px}.case-letter {width:34px;height:34px;font-size:18px}.case-title-copy h3 {font-size:19px}.case-axis-name {font-size:12px}.case-mapping-row {grid-template-columns:96px minmax(0,1fr);gap:8px}.case-scale-tick>span {font-size:9px}}
+
+/* Current scale markers: simple dots without an outer ring. */
+.axis-input::-webkit-slider-thumb{width:10px;height:10px;margin-top:-4px;border:0;box-shadow:none}
+.axis-input::-moz-range-thumb{width:10px;height:10px;border:0;box-shadow:none}
+.axis-input:focus-visible::-webkit-slider-thumb{box-shadow:none}
+.axis-input:focus-visible{outline:2px solid #90b2ff;outline-offset:2px;border-radius:3px}
