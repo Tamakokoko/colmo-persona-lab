@@ -30,7 +30,7 @@
     if(!data || ![1,2,3].includes(data.version) || !data.baseline || !data.strategies) throw new Error('文件格式不匹配，请选择本网页导出的 JSON。');
     const check = values => {if(!Array.isArray(values)||values.length!==8||values.some((v,i)=>!Number.isInteger(v)||v<axes[i].min||v>axes[i].max))throw new Error('参数必须是八个有效的整数刻度。');};
     for(const field of ['center','low','high']) check(data.baseline[field]);
-    for(let i=0;i<8;i++)if(data.baseline.low[i]>data.baseline.center[i]||data.baseline.center[i]>data.baseline.high[i])throw new Error('原型中心必须位于允许范围内。');
+    for(let i=0;i<8;i++)if(data.baseline.low[i]>data.baseline.center[i]||data.baseline.center[i]>data.baseline.high[i])throw new Error('原型参照线必须位于允许范围内。');
     for(const key of Object.keys(catalog.strategies)) {
       const s=data.strategies[key];if(!s)throw new Error('参数缺少策略 '+key+'。');
       for(const field of key==='D'?['low','high']:['values']){check(s[field]);if(s[field].some((v,i)=>v<data.baseline.low[i]||v>data.baseline.high[i]))throw new Error('策略 '+key+' 超出了原型允许范围。');}
@@ -56,9 +56,11 @@
   }
   let loadMessage='';
   try {const cached=localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem('colmo-persona-lab-v2') ?? localStorage.getItem(LEGACY_STORAGE_KEY);if(cached){
-    const parsed=JSON.parse(cached),oldDefault=clone(defaults);oldDefault.version=2;for(const k of riskKeys)delete oldDefault.strategies.D[k];
+    const parsed=JSON.parse(cached),previousDefault=clone(defaults);previousDefault.strategies.D.lowRisk[6]=3;previousDefault.strategies.D.high[6]=3;
+    const oldDefault=clone(previousDefault);oldDefault.version=2;for(const k of riskKeys)delete oldDefault.strategies.D[k];
     const olderDefault=clone(oldDefault);olderDefault.baseline.high[1]=3;olderDefault.baseline.high[5]=4;olderDefault.strategies.D.high[1]=3;olderDefault.strategies.D.high[5]=4;
-    state=[oldDefault,olderDefault].some(d=>JSON.stringify(parsed)===JSON.stringify(d))?clone(defaults):validate(parsed);
+    const priorDefaults=[defaults,previousDefault,oldDefault,olderDefault].map(d=>{const prior=clone(d);prior.strategies.C.values[5]=3;return prior;});
+    state=[previousDefault,oldDefault,olderDefault,...priorDefaults].some(d=>JSON.stringify(parsed)===JSON.stringify(d))?clone(defaults):validate(parsed);
   }}catch(e){loadMessage='未能读取本机草稿，已载入默认值。';}
   function save() { clearTimeout(saveTimer);$('saveState').textContent='正在保存…';saveTimer=setTimeout(()=>{try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));$('saveState').textContent='已保存至本机';}catch(e){storageAvailable=false;$('saveState').textContent='请导出保存';$('storageNote').textContent='浏览器存储不可用，请导出参数';}},250); }
   function modified(key) {if(key==='overview')return false;return JSON.stringify(key==='prototype'?state.baseline:state.strategies[key])!==JSON.stringify(key==='prototype'?defaults.baseline:defaults.strategies[key]);}
@@ -219,7 +221,7 @@
   }
   function refreshRows() {
     axes.forEach((axis,i)=>{const row=$('axis-'+i);const[low,high]=selectedBounds(i);row.querySelector('output').textContent=low===high?levelName(i,low):level(i,low)+'–'+level(i,high)+' · '+axis.ticks[low-axis.min]+' → '+axis.ticks[high-axis.min];row.querySelectorAll('.axis-input').forEach(input=>{let value=active==='prototype'?state.baseline.center[i]:active==='D'?state.strategies.D[input.dataset.field][i]:low;input.value=value;input.setAttribute('aria-valuetext',levelName(i,value));});row.querySelectorAll('.allowed-segment').forEach(el=>{el.style.left=pct(i,state.baseline.low[i])+'%';el.style.width=(pct(i,state.baseline.high[i])-pct(i,state.baseline.low[i]))+'%';});row.querySelectorAll('.strategy-segment').forEach(el=>{el.style.left=pct(i,low)+'%';el.style.width=(pct(i,high)-pct(i,low))+'%';});row.querySelectorAll('.baseline-marker').forEach(el=>el.style.left=pct(i,state.baseline.center[i])+'%');row.querySelectorAll('.track-tick-dot').forEach(dot=>{const value=Number(dot.dataset.value);dot.classList.toggle('outside-range',value<state.baseline.low[i]||value>state.baseline.high[i]);});row.querySelectorAll('.tick-label').forEach(b=>{const v=Number(b.dataset.value);b.classList.toggle('selected',v>=low&&v<=high);b.classList.toggle('outside-range',v<state.baseline.low[i]||v>state.baseline.high[i]);});row.querySelectorAll('select').forEach(s=>{s.value=state.baseline[s.dataset.field][i];Array.from(s.options).forEach(op=>op.disabled=s.dataset.field==='low'?Number(op.value)>state.baseline.high[i]:Number(op.value)<state.baseline.low[i]);});});
-    let changed=0;axes.forEach((_,i)=>{const[l,h]=selectedBounds(i);if(l!==state.baseline.center[i]||h!==state.baseline.center[i])changed++;});$('changeCount').textContent=active==='prototype'?'原型中心 / 允许范围':('与原型差异：'+changed+' 维');$('radarDescription').textContent=axes.map((axis,i)=>{const[l,h]=selectedBounds(i);return axis.name+' '+levelName(i,l)+(l!==h?' 至 '+levelName(i,h):'');}).join('；');updateTabs();
+    let changed=0;axes.forEach((_,i)=>{const[l,h]=selectedBounds(i);if(l!==state.baseline.center[i]||h!==state.baseline.center[i])changed++;});$('changeCount').textContent=active==='prototype'?'原型参照线 / 允许范围':('与原型差异：'+changed+' 维');$('radarDescription').textContent=axes.map((axis,i)=>{const[l,h]=selectedBounds(i);return axis.name+' '+levelName(i,l)+(l!==h?' 至 '+levelName(i,h):'');}).join('；');updateTabs();
   }
   function constrainStrategies() {let count=0;for(const strategy of Object.values(state.strategies))for(const values of Object.values(strategy))values.forEach((v,i)=>{const next=clamp(v,state.baseline.low[i],state.baseline.high[i]);if(v!==next)count++;values[i]=next;});syncRiskBounds();return count;}
   function syncRiskBounds(){const s=state.strategies.D;axes.forEach((_,i)=>{s.low[i]=Math.min(...riskKeys.map(k=>s[k][i]));s.high[i]=Math.max(...riskKeys.map(k=>s[k][i]));});}
@@ -274,7 +276,7 @@
     if(overview){$('compareToggle').disabled=false;$('radarTitle').textContent='六类策略八维雷达图总览';drawOverview();return;}
     $('contextRationale').hidden=key==='prototype';
     $('contextDimensionChange').textContent=key==='prototype'?'':catalog.strategies[key].dimensionChange;
-    const proto=key==='prototype',risk=key==='D';$('activeLegend').textContent=proto?'原型中心':key+' · '+catalog.strategies[key].short;$('baseLegend').hidden=proto||!$('compareToggle').checked;$('bandLegend').hidden=true;$('compareToggle').disabled=proto;$('editorTitle').textContent=proto?'人格原型':key+' · '+catalog.strategies[key].title;$('editorHint').textContent='悬停查看含义 · 点击或拖动调值';
+    const proto=key==='prototype',risk=key==='D';$('activeLegend').textContent=proto?'原型参照线':key+' · '+catalog.strategies[key].short;$('baseLegend').hidden=proto||!$('compareToggle').checked;$('bandLegend').hidden=true;$('compareToggle').disabled=proto;$('editorTitle').textContent=proto?'人格原型':key+' · '+catalog.strategies[key].title;$('editorHint').textContent='悬停查看含义 · 点击或拖动调值';
     $('contextLetter').textContent=proto?'◎':key;
     $('contextTitle').textContent=proto?'理性、专业、克制的高端管家':catalog.strategies[key].title;
     $('prototypeIntroduction').hidden=!proto;
@@ -298,6 +300,8 @@
     document.documentElement.style.setProperty('--strategy-color',r.color);
     $('riskTabs').querySelectorAll('button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.risk===activeRisk)));
     $('contextPurpose').textContent=r.title+' · '+r.purpose;
+    $('contextDefinitionLabel').textContent='风险定义';
+    $('contextDefinition').textContent=r.definition;
     $('contextExample').textContent=r.scenario+' “'+r.example+'”';
     $('contextBoundary').textContent=r.boundary;
     $('contextDimensionChange').textContent=r.changes.map(([axis,reason])=>axis+'｜'+reason).join('；\n')+'。';

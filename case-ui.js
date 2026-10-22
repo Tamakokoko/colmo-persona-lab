@@ -8,7 +8,7 @@
   const asset = (key, name, ext='png') => window.COLMO_CASE_ASSETS[`${key}-${name}.${ext}`];
   const crop = (key,name,kind) => `<span class="brand-crop ${kind}"><img src="${asset(key,name)}" alt=""></span>`;
   function brand(c) {
-    if(c.textBrand)return `<div class="case-brand case-brand-text">${escape(c.textBrand)}<small>座舱安全协同</small></div>`;
+    if(c.textBrand)return `<div class="case-brand case-brand-text">${escape(c.textBrand)}<small>${escape(c.brandSubtitle || '座舱安全协同')}</small></div>`;
     let mark;
     if(c.key==='A') mark=crop('A','imgImage8106382','brand-celia')+`<span class="brand-wordrow">小艺管家｜${crop('A','imgImage8087','brand-huawei')}</span><small>默契、包容的家人</small>`;
     else if(c.key==='B'||c.key==='F') mark=crop(c.key,'imgImage8106257','brand-bixby')+`<span class="brand-wordrow">Bixby｜${crop(c.key,'imgSamsungOrigWordmarkBlackRgb3','brand-samsung')}</span><small>自然、高效的设备专家</small>`;
@@ -27,10 +27,16 @@
     return `<div class="case-mapping-row"><div class="case-axis-name">${escape(row[0])}<small>${range}</small></div><div class="case-mini-scale" role="img" aria-label="${escape(row[0])}：${range}，${escape(axis.ticks[low-axis.min])}${high!==low?'至'+escape(axis.ticks[high-axis.min]):''}"><div class="case-scale-line"></div>${ticks}${high!==low?`<span class="case-scale-range" style="left:${position(low)}%;width:${position(high)-position(low)}%"></span>`:''}${point(low)}${high!==low?point(high):''}</div><p>${escape(row[1])}</p></div>`;
   }
   let selectedRisk='lowRisk';
+  const selectedVariants={};
+  const variantTabs=document.getElementById('caseVariantTabs');
   const riskTabs=document.getElementById('riskCaseTabs');
   function render(key) {
     const base=cases.find(item=>item.key===key)||cases[0];
-    const c=base.key==='D'?base.riskCases[selectedRisk]:base;
+    const variants=[base,...(base.additionalCases||[])];
+    const c=base.key==='D'?base.riskCases[selectedRisk]:variants[selectedVariants[base.key]||0];
+    variantTabs.hidden=variants.length===1;
+    variantTabs.replaceChildren();
+    if(variants.length>1)variants.forEach((item,i)=>{const b=document.createElement('button');b.type='button';b.textContent=item.brand+' · '+item.title;b.setAttribute('aria-pressed',String(i===(selectedVariants[base.key]||0)));b.addEventListener('click',()=>{selectedVariants[base.key]=i;render(base.key);});variantTabs.append(b);});
     riskTabs.hidden=base.key!=='D';
     riskTabs.querySelectorAll('button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.risk===selectedRisk)));
     dialog.style.setProperty('--case-color',c.color);

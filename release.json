@@ -1,0 +1,15 @@
+{
+  "release": "20261022-report-sync",
+  "files": {
+    "index.html": "14f62d444d54cf891bc0cee3bcbc477226444688ca454e23830adf7be8e6cc60",
+    "app.js": "784f225134a1c153310375d6164136d9ad3979b9a0faf378672758ff77f91a28",
+    "data.js": "43f291c7c435570cf35e2c23c15bdb7574b034df85ea7ba18f8ff9a604a8d22b",
+    "scales.js": "363ab02942ef02cebbdeed98d51fb3eee8c08b0d146b8b897c44a17f4538c64b",
+    "cases.js": "fbf1f70a1b98631fd20b30dc83972e839d2adfe162d21a33a6a69b95feb4459a",
+    "case-ui.js": "b67f5bd82bf5b03411f4b5541ffae38a73ce818dfd4996312927675c68400c4a",
+    "case-assets.js": "c24ef1bfa9d1a6093a61fe738110be5f03d7be7f83c827a19e31e6e2356d3a14",
+    "styles.css": "64f9624ade16623eff7bbe103a87e1ca04a383e4e351961a506b19bc1e27cbf9",
+    "favicon.svg": "7cfd85d797a554b14801cbc7211d81cd3bb13100d470baa1997906f38ad7c440",
+    "README.md": "f29e68aecb765ed49c8bdfcd502a0770ea1cea11eb743650485e0c24d16d349c"
+  }
+}

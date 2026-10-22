@@ -249,7 +249,7 @@ main{width:100%;max-width:none;min-width:0;padding:16px 20px 0;margin:0}
 .case-scale-tick>span {display:block;position:absolute;top:14px;left:50%;transform:translateX(-50%);font-size:10px;white-space:nowrap;color:#667b96}
 .case-scale-range {position:absolute;top:10px;height:5px;background:var(--case-color);opacity:.65;border-radius:3px}
 .case-scale-point {position:absolute;top:7px;width:11px;height:11px;transform:translateX(-50%)}
-.case-mapping-row>p {margin:10px 0;font-size:12px;line-height:1.7}
+.case-mapping-row>p {margin:10px 0;font-size:12px;line-height:1.7;white-space:pre-line}
 .case-sources {border-top:1px solid #e7edf6;margin-top:22px;padding-top:18px}
 .case-sources h4 {margin-bottom:10px}
 .case-sources a {display:flex;align-items:center;gap:12px;padding:9px 0;text-decoration:none;color:#426ba5;font-size:12px;line-height:1.6}
@@ -276,3 +276,10 @@ main{width:100%;max-width:none;min-width:0;padding:16px 20px 0;margin:0}
 .axis-input::-moz-range-thumb{width:10px;height:10px;border:0;box-shadow:none}
 .axis-input:focus-visible::-webkit-slider-thumb{box-shadow:none}
 .axis-input:focus-visible{outline:2px solid #90b2ff;outline-offset:2px;border-radius:3px}
+
+/* Alternative official examples within the same strategy. */
+.case-variant-tabs { display:flex; flex-wrap:wrap; gap:8px; padding:4px 28px 14px; }
+.case-variant-tabs[hidden] { display:none; }
+.case-variant-tabs button { border:1px solid #dce2ed; background:#fff; color:#526279; border-radius:8px; padding:8px 12px; font:inherit; font-size:12px; cursor:pointer; }
+.case-variant-tabs button[aria-pressed="true"] { color:var(--case-color); border-color:var(--case-color); background:color-mix(in srgb,var(--case-color) 7%,white); }
+.case-variant-tabs button:focus-visible { outline:2px solid var(--case-color); outline-offset:2px; }

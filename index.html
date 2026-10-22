@@ -7,13 +7,13 @@
   <meta name="description" content="COLMO 八维人格与六类 AI 表达策略的交互式工作坊。">
   <title>COLMO · 人格表达实验台</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=20261014-risk2">
-  <script defer src="data.js?v=20261014-risk2"></script>
-  <script defer src="scales.js?v=20261014-risk2"></script>
-  <script defer src="cases.js?v=20261014-risk2"></script>
-  <script defer src="case-assets.js?v=20261014-risk2"></script>
-  <script defer src="case-ui.js?v=20261014-risk2"></script>
-  <script defer src="app.js?v=20261014-risk2"></script>
+  <link rel="stylesheet" href="styles.css?v=20261022-report-sync">
+  <script defer src="data.js?v=20261022-report-sync"></script>
+  <script defer src="scales.js?v=20261022-report-sync"></script>
+  <script defer src="cases.js?v=20261022-report-sync"></script>
+  <script defer src="case-assets.js?v=20261022-report-sync"></script>
+  <script defer src="case-ui.js?v=20261022-report-sync"></script>
+  <script defer src="app.js?v=20261022-report-sync"></script>
 </head>
 <body>
   <header class="topbar">
@@ -28,7 +28,7 @@
       <div class="context-heading"><span id="contextLetter" class="context-letter"></span><h2 id="contextTitle"></h2></div>
       <nav id="riskTabs" class="risk-tabs" role="tablist" aria-label="风险等级" hidden></nav>
       <p id="contextPurpose" class="context-purpose"></p>
-      <p id="prototypeIntroduction" class="prototype-introduction" hidden>以专业判断照料家庭，表达理性、克制、有温度，主动服务有依据、行动有分寸。八维中心是日常表达的基准，允许范围承载不同服务目的下的变化；六类策略在此范围内调整，保持人格一致。</p>
+      <p id="prototypeIntroduction" class="prototype-introduction" hidden>以专业判断照料家庭，表达理性、克制、有温度，主动服务有依据、行动有分寸。参照线标示日常表达的参考位置，允许范围界定各维度的上下限；六类策略按任务目的和风险等级，在范围内设定具体表达。</p>
       <div id="contextColumns" class="context-columns">
         <div><span id="contextDefinitionLabel" class="context-tag">口语化定义</span><p id="contextDefinition"></p></div>
         <div><span class="context-tag">案例</span><p id="contextExample"></p></div>
@@ -45,7 +45,7 @@
           <div class="panel-head"><div><h2 id="chartHeading">八维表达轮廓</h2></div><button id="caseReferenceButton" class="case-reference-button" aria-haspopup="dialog" aria-controls="caseDialog">案例参考 <span aria-hidden="true">↗</span></button></div>
           <div class="chart-options"><label class="switch"><input type="checkbox" id="compareToggle" checked><span></span>对比人格原型</label><label class="switch"><input type="checkbox" id="envelopeToggle" checked><span></span>原型允许范围</label></div>
           <div class="radar-wrap"><svg id="radar" viewBox="0 0 640 590" role="group" aria-labelledby="radarTitle radarDescription"><title id="radarTitle">八维人格表达雷达图</title><desc id="radarDescription"></desc><g id="rangeLayer"></g><g id="gridLayer"></g><g id="baselineLayer"></g><g id="activeLayer"></g><g id="labelLayer"></g></svg></div>
-          <div id="detailLegend" class="legend"><span><i class="key-active"></i><b id="activeLegend">当前策略</b></span><span id="baseLegend"><i class="key-base"></i>原型中心</span><span id="bandLegend" hidden><i class="key-band"></i>策略上下限</span></div>
+          <div id="detailLegend" class="legend"><span><i class="key-active"></i><b id="activeLegend">当前策略</b></span><span id="baseLegend"><i class="key-base"></i>原型参照线</span><span id="bandLegend" hidden><i class="key-band"></i>策略上下限</span></div>
           <div id="overviewLegend" class="overview-legend" hidden></div>
         </section>
 
@@ -67,7 +67,7 @@
   </main>
   </div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <dialog id="caseDialog" class="case-dialog" aria-labelledby="caseDialogHeading"><header class="case-dialog-header"><h2 id="caseDialogHeading">案例参考</h2><button id="closeCases" class="quiet" aria-label="关闭案例参考" autofocus>✕</button></header><nav id="caseTabs" class="case-tabs" aria-label="选择策略案例"></nav><nav id="riskCaseTabs" class="risk-tabs case-risk-tabs" role="tablist" aria-label="风险案例等级" hidden></nav><div id="caseContent" class="case-content"></div></dialog>
+  <dialog id="caseDialog" class="case-dialog" aria-labelledby="caseDialogHeading"><header class="case-dialog-header"><h2 id="caseDialogHeading">案例参考</h2><button id="closeCases" class="quiet" aria-label="关闭案例参考" autofocus>✕</button></header><nav id="caseTabs" class="case-tabs" aria-label="选择策略案例"></nav><nav id="riskCaseTabs" class="risk-tabs case-risk-tabs" role="tablist" aria-label="风险案例等级" hidden></nav><nav id="caseVariantTabs" class="case-variant-tabs" aria-label="选择案例" hidden></nav><div id="caseContent" class="case-content"></div></dialog>
   <dialog id="helpDialog"><div class="dialog-head"><h2>从本地网页到分享链接</h2><button id="closeHelp" class="quiet" aria-label="关闭">✕</button></div><p>Git 保存版本，GitHub 存放代码，GitHub Pages 把它变成可访问的网页。</p><ol><li>在 GitHub 新建仓库，例如 <code>colmo-persona-lab</code>。</li><li>用 <strong>Add file → Upload files</strong> 上传网页文件夹内的文件，确保 <code>index.html</code> 位于仓库根目录。</li><li>在 <strong>Settings → Pages</strong> 中选择 <strong>Deploy from a branch → main → / (root)</strong>，保存后等待生成访问链接。</li></ol><p class="small">发布的是文件中的默认值。工作坊里编辑的参数只保存在本机；请导出 JSON 交给其他人导入。发布前确认仓库与网页的可见范围。</p><a href="https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site" target="_blank" rel="noopener noreferrer">查看 GitHub 官方说明 ↗</a></dialog>
 </body>
 </html>
