@@ -56,7 +56,9 @@ main{padding-top:22px}.topbar{height:68px}.wordmark span{letter-spacing:.5px;fon
 
 .chart-panel .legend{padding-bottom:24px}.scale-popover .popover-limit{margin:10px 0 0;padding-top:9px;border-top:1px solid #edf1f6;font-size:10px}
 
-.scale-popover{pointer-events:none}
+.scale-popover{pointer-events:none;width:min(400px,calc(100vw - 24px))}
+.scale-entry p>strong{display:block;font-size:10px;font-weight:600;color:#7c8ba0;margin-bottom:3px}
+.scale-example{border-top:1px solid #e6edf5;padding-top:9px}
 .radar-tick-target{fill:transparent;stroke:transparent;stroke-width:1.2;pointer-events:all;cursor:help}
 .radar-tick-target:hover,.radar-tick-target:focus-visible{stroke:var(--tick-color);outline:none}
 /* Overview and strategy-first reading order. */
@@ -283,3 +285,13 @@ main{width:100%;max-width:none;min-width:0;padding:16px 20px 0;margin:0}
 .case-variant-tabs button { border:1px solid #dce2ed; background:#fff; color:#526279; border-radius:8px; padding:8px 12px; font:inherit; font-size:12px; cursor:pointer; }
 .case-variant-tabs button[aria-pressed="true"] { color:var(--case-color); border-color:var(--case-color); background:color-mix(in srgb,var(--case-color) 7%,white); }
 .case-variant-tabs button:focus-visible { outline:2px solid var(--case-color); outline-offset:2px; }
+
+/* Strategy intent translated into the three established dimension groups. */
+.context-rationale{display:block;padding-top:0;border-top:0}
+.design-principles{margin:0}
+.design-principle{display:grid;grid-template-columns:78px minmax(0,1fr);gap:16px;padding:8px 0;border-top:1px solid var(--line);font-size:12px;line-height:1.65}
+.design-principle dt{font-weight:600;color:var(--strategy-color)}
+.design-principle dd{margin:0;color:#42566f}
+.context-risk{grid-column:1/-1;margin:0;font-size:11px;line-height:1.6;color:#6b7890}
+@media(min-width:1100px) and (max-height:850px){.design-principle{padding:5px 0;font-size:11px}}
+@media(max-width:600px){.design-principle{grid-template-columns:64px minmax(0,1fr);gap:10px}}

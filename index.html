@@ -7,13 +7,13 @@
   <meta name="description" content="COLMO 八维人格与六类 AI 表达策略的交互式工作坊。">
   <title>COLMO · 人格表达实验台</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=20261022-report-sync">
-  <script defer src="data.js?v=20261022-report-sync"></script>
-  <script defer src="scales.js?v=20261022-report-sync"></script>
-  <script defer src="cases.js?v=20261022-report-sync"></script>
+  <link rel="stylesheet" href="styles.css?v=20261028-concise-principles">
+  <script defer src="data.js?v=20261028-concise-principles"></script>
+  <script defer src="scales.js?v=20261028-concise-principles"></script>
+  <script defer src="cases.js?v=20261028-scale-sync"></script>
   <script defer src="case-assets.js?v=20261022-report-sync"></script>
   <script defer src="case-ui.js?v=20261022-report-sync"></script>
-  <script defer src="app.js?v=20261022-report-sync"></script>
+  <script defer src="app.js?v=20261028-concise-principles"></script>
 </head>
 <body>
   <header class="topbar">
@@ -29,15 +29,10 @@
       <nav id="riskTabs" class="risk-tabs" role="tablist" aria-label="风险等级" hidden></nav>
       <p id="contextPurpose" class="context-purpose"></p>
       <p id="prototypeIntroduction" class="prototype-introduction" hidden>以专业判断照料家庭，表达理性、克制、有温度，主动服务有依据、行动有分寸。参照线标示日常表达的参考位置，允许范围界定各维度的上下限；六类策略按任务目的和风险等级，在范围内设定具体表达。</p>
-      <div id="contextColumns" class="context-columns">
-        <div><span id="contextDefinitionLabel" class="context-tag">口语化定义</span><p id="contextDefinition"></p></div>
-        <div><span class="context-tag">案例</span><p id="contextExample"></p></div>
-        <div><span class="context-tag">边界</span><p id="contextBoundary"></p></div>
-      </div>
       <div id="contextRationale" class="context-rationale" hidden>
-        <span class="context-tag">维度变化</span>
-        <p id="contextDimensionChange"></p>
+        <dl id="contextDimensionChange" class="design-principles" aria-label="三大维度设计原则"></dl>
       </div>
+      <p id="contextRisk" class="context-risk" hidden></p>
     </section>
     <section class="workspace">
       <div class="chart-column">

@@ -133,15 +133,21 @@
     }
     track.append(rangeInput(i,field,label));outer.append(track);row.append(outer);}
   function makeScaleEntry(i,value,label='') {
-    const [name,text] = scales[axes[i].id].levels[value-axes[i].min];
+    const scale = scales[axes[i].id];
+    const [name,text,example] = scale.levels[value-axes[i].min];
     const entry=document.createElement('div');entry.className='scale-entry';entry.dataset.level=value;
     const heading=document.createElement('div');heading.className='scale-entry-heading';
     const code=document.createElement('span');code.className='scale-code';code.textContent=level(i,value);
     const title=document.createElement('strong');title.textContent=name;
     const badge=document.createElement('span');badge.className='scale-status';badge.textContent=label;
     heading.append(code,title,badge);
-    const explanation=document.createElement('p');explanation.textContent=text;
-    entry.append(heading,explanation);return entry;
+    const explanation=document.createElement('p');explanation.className='scale-definition';
+    const definitionLabel=document.createElement('strong');definitionLabel.textContent='刻度定义';
+    explanation.append(definitionLabel,document.createTextNode(text));
+    const illustration=document.createElement('p');illustration.className='scale-example';
+    const exampleLabel=document.createElement('strong');exampleLabel.textContent='设计参照 · '+scale.scenario;
+    illustration.append(exampleLabel,document.createTextNode(example));
+    entry.append(heading,explanation,illustration);return entry;
   }
   let popoverState=null;
   const popover=document.createElement('div');popover.id='scale-popover';popover.className='scale-popover';
@@ -241,7 +247,7 @@
     for(let ring=0;ring<=4;ring++){const fraction=ring/4;svgNode('path',{d:shape(axes.map(a=>a.min+fraction*(a.max-a.min))),class:'grid-path'},grid);}
     axes.forEach((axis,i)=>{const p=point(i,axis.max);svgNode('path',{d:'M'+cx+' '+cy+' L'+p.join(' '),class:'spoke'},grid);for(let value=axis.min;value<=axis.max;value++){const q=point(i,value);const an=-Math.PI/2+i*Math.PI/4,dx=-Math.sin(an)*3,dy=Math.cos(an)*3;svgNode('path',{d:'M'+(q[0]-dx)+' '+(q[1]-dy)+' L'+(q[0]+dx)+' '+(q[1]+dy),stroke:'#bfcde2','stroke-width':1},grid);}});
     const locations=[[320,48,'middle'],[493,113,'middle'],[552,281,'start'],[493,472,'middle'],[320,536,'middle'],[146,472,'middle'],[89,278,'end'],[146,113,'middle']];
-    axes.forEach((axis,i)=>{const[x,y,anchor]=locations[i],g=svgNode('g',{},$('labelLayer'));const t=svgNode('text',{x,y,'text-anchor':anchor,fill:colors[axis.group],class:'axis-label'},g);if(i===6){t.textContent='非请求式';const t2=svgNode('tspan',{x,dy:18},t);t2.textContent='介入阈值';}else if(i===2){t.textContent='感知能力';const t2=svgNode('tspan',{x,dy:18},t);t2.textContent='/ 专业感';}else t.textContent=axis.name;const tick=svgNode('text',{x,y:y+(i===2||i===6?37:21),'text-anchor':anchor,class:'axis-tick'},g);tick.textContent=axis.prefix+axis.min+' → '+axis.prefix+axis.max;t.addEventListener('click',()=>{if(active==='overview')return;const row=$('axis-'+i);row.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'center'});row.classList.add('flash');setTimeout(()=>row.classList.remove('flash'),1100);});});
+    axes.forEach((axis,i)=>{const[x,y,anchor]=locations[i],g=svgNode('g',{},$('labelLayer'));const t=svgNode('text',{x,y,'text-anchor':anchor,fill:colors[axis.group],class:'axis-label'},g);if(i===6){t.textContent='主动';const t2=svgNode('tspan',{x,dy:18},t);t2.textContent='介入阈值';}else if(i===2){t.textContent='感知能力';const t2=svgNode('tspan',{x,dy:18},t);t2.textContent='/ 专业感';}else t.textContent=axis.name;const tick=svgNode('text',{x,y:y+(i===2||i===6?37:21),'text-anchor':anchor,class:'axis-tick'},g);tick.textContent=axis.prefix+axis.min+' → '+axis.prefix+axis.max;t.addEventListener('click',()=>{if(active==='overview')return;const row=$('axis-'+i);row.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'center'});row.classList.add('flash');setTimeout(()=>row.classList.remove('flash'),1100);});});
   }
   function buildRadarHover() {
     const layer=svgNode('g',{id:'radarTickTargets'},$('radar'));
@@ -275,36 +281,35 @@
     $('riskTabs').hidden=key!=='D';
     if(overview){$('compareToggle').disabled=false;$('radarTitle').textContent='六类策略八维雷达图总览';drawOverview();return;}
     $('contextRationale').hidden=key==='prototype';
-    $('contextDimensionChange').textContent=key==='prototype'?'':catalog.strategies[key].dimensionChange;
+    renderDesignPrinciples(key);
     const proto=key==='prototype',risk=key==='D';$('activeLegend').textContent=proto?'原型参照线':key+' · '+catalog.strategies[key].short;$('baseLegend').hidden=proto||!$('compareToggle').checked;$('bandLegend').hidden=true;$('compareToggle').disabled=proto;$('editorTitle').textContent=proto?'人格原型':key+' · '+catalog.strategies[key].title;$('editorHint').textContent='悬停查看含义 · 点击或拖动调值';
     $('contextLetter').textContent=proto?'◎':key;
     $('contextTitle').textContent=proto?'理性、专业、克制的高端管家':catalog.strategies[key].title;
     $('prototypeIntroduction').hidden=!proto;
-    $('contextColumns').hidden=proto;
     $('contextPurpose').hidden=proto;
-    $('contextPurpose').textContent=proto?'':catalog.strategies[key].purpose;
-    if(!proto){
-      const strategy=catalog.strategies[key];
-      $('contextDefinitionLabel').textContent='口语化定义';
-      $('contextDefinition').textContent='“'+strategy.spoken+'”';
-      $('contextExample').textContent='“'+strategy.example+'”';
-      $('contextBoundary').textContent=strategy.boundary;
-    }
+    $('contextPurpose').textContent=proto?'':catalog.strategies[key].goal;
     $('radarTitle').textContent=(proto?'COLMO 人格原型':key+' '+catalog.strategies[key].title)+'八维雷达图';
     $('radarDescription').textContent=axes.map((axis,i)=>{const[l,h]=selectedBounds(i);return axis.name+' '+levelName(i,l)+(l!==h?' 至 '+levelName(i,h):'');}).join('；');
     if(risk)renderRiskContext();
     renderEditor();transition();
   }
+  function renderDesignPrinciples(key){
+    const list=$('contextDimensionChange');list.replaceChildren();
+    const rows=catalog.strategies[key]?.designPrinciples||[];
+    for(const [name,principle] of rows){
+      const row=document.createElement('div');row.className='design-principle';
+      const title=document.createElement('dt');title.textContent=name;
+      const text=document.createElement('dd');text.textContent=principle;
+      row.append(title,text);list.append(row);
+    }
+    $('contextRisk').hidden=key!=='D';
+  }
   function renderRiskContext(){
     const r=risks[activeRisk];
     document.documentElement.style.setProperty('--strategy-color',r.color);
     $('riskTabs').querySelectorAll('button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.risk===activeRisk)));
-    $('contextPurpose').textContent=r.title+' · '+r.purpose;
-    $('contextDefinitionLabel').textContent='风险定义';
-    $('contextDefinition').textContent=r.definition;
-    $('contextExample').textContent=r.scenario+' “'+r.example+'”';
-    $('contextBoundary').textContent=r.boundary;
-    $('contextDimensionChange').textContent=r.changes.map(([axis,reason])=>axis+'｜'+reason).join('；\n')+'。';
+    $('contextPurpose').textContent=catalog.strategies.D.goal;
+    $('contextRisk').textContent=r.title+'｜'+r.definition;
     $('activeLegend').textContent=r.title;
     $('editorTitle').textContent=r.title+' · 八维表达';
     $('radarTitle').textContent=r.title+'八维表达雷达图';
