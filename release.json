@@ -1,15 +1,15 @@
 {
-  "release": "20261028-auto-hover-demo",
+  "release": "20261028-unified-definitions",
   "files": {
-    "index.html": "609717d5f7a4bee7843467406d8c4f1536ac6ed79783de5d27c8feda29f17ee5",
-    "app.js": "9d021a75161b9259f6a2d0193c42ebad5801c0318b23bea5fc9950cece3d90e7",
-    "data.js": "dad93c3b6e3b052acbf4221403c6ac21679f4632d2370687f66ac43de6841329",
+    "index.html": "3de1a727d99881927b70fcd0dd402cbb0332cf67e424bb8ae49e40ece7eb0560",
+    "app.js": "44789fd1a96fcab920fff6dc74b246a958db0201e14d1a14e1227454cdf02339",
+    "data.js": "41e1d913210f12bda5acc5bbbf65f3db953d1d05657e3b7f39a113725d9bd4bb",
     "scales.js": "bd04d5c07d0184300eaac74f18b84230ec446246423d7c8ebd1fe693cadcdcf2",
     "cases.js": "2227901abb0189c0c168807f1581481ab2edfefae4d8a1997b74592c2e93483f",
     "case-ui.js": "b67f5bd82bf5b03411f4b5541ffae38a73ce818dfd4996312927675c68400c4a",
     "case-assets.js": "c24ef1bfa9d1a6093a61fe738110be5f03d7be7f83c827a19e31e6e2356d3a14",
     "styles.css": "9bfd80757173481843e0e00e82e5c696527580d78f9d9a12b2b7e8b55389da22",
     "favicon.svg": "7cfd85d797a554b14801cbc7211d81cd3bb13100d470baa1997906f38ad7c440",
-    "README.md": "63b5ea34c87b8bdeedceae177d94488b94d7f812bc76611070bde9d21394fffb"
+    "README.md": "9694c234fa51c439796e400b1e187636b643355a456130248c5876ded58229a0"
   }
 }

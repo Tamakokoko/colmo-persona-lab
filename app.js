@@ -302,7 +302,7 @@
     $('contextTitle').textContent=proto?'理性、专业、克制的高端管家':catalog.strategies[key].title;
     $('prototypeIntroduction').hidden=!proto;
     $('contextPurpose').hidden=proto;
-    $('contextPurpose').textContent=proto?'':catalog.strategies[key].goal;
+    $('contextPurpose').textContent=proto?'':'定义｜'+catalog.strategies[key].definition;
     $('radarTitle').textContent=(proto?'COLMO 人格原型':key+' '+catalog.strategies[key].title)+'八维雷达图';
     $('radarDescription').textContent=axes.map((axis,i)=>{const[l,h]=selectedBounds(i);return axis.name+' '+levelName(i,l)+(l!==h?' 至 '+levelName(i,h):'');}).join('；');
     if(risk)renderRiskContext();
@@ -325,7 +325,7 @@
     const r=risks[activeRisk];
     document.documentElement.style.setProperty('--strategy-color',r.color);
     $('riskTabs').querySelectorAll('button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.risk===activeRisk)));
-    $('contextPurpose').textContent=catalog.strategies.D.goal;
+    $('contextPurpose').textContent='定义｜'+catalog.strategies.D.definition;
     $('contextRisk').textContent=r.title+'｜'+r.definition;
     $('activeLegend').textContent=r.title;
     $('editorTitle').textContent=r.title+' · 八维表达';
