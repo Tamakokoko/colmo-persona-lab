@@ -1,14 +1,14 @@
 {
-  "release": "20261028-top-principles-verified",
+  "release": "20261028-auto-hover-demo",
   "files": {
-    "index.html": "3d314ce275c73f82ba5fd740e7542aeae2ff8c4990f6cd2c69b2663ed1bff851",
-    "app.js": "db0b6da128ec1e19e0cc5d2cf2158cf844b314a863d48ffdee6dd6e2a4ffede7",
-    "data.js": "4f6b785876608bb5d9e46b312c0cc5894ae1159e5d242c8ef0528ae554437d92",
-    "scales.js": "8d78a3d3b71bf36d7e16610a641c4fba2c80c843c435f44872bf48b0069d7c64",
+    "index.html": "609717d5f7a4bee7843467406d8c4f1536ac6ed79783de5d27c8feda29f17ee5",
+    "app.js": "9d021a75161b9259f6a2d0193c42ebad5801c0318b23bea5fc9950cece3d90e7",
+    "data.js": "dad93c3b6e3b052acbf4221403c6ac21679f4632d2370687f66ac43de6841329",
+    "scales.js": "bd04d5c07d0184300eaac74f18b84230ec446246423d7c8ebd1fe693cadcdcf2",
     "cases.js": "2227901abb0189c0c168807f1581481ab2edfefae4d8a1997b74592c2e93483f",
     "case-ui.js": "b67f5bd82bf5b03411f4b5541ffae38a73ce818dfd4996312927675c68400c4a",
     "case-assets.js": "c24ef1bfa9d1a6093a61fe738110be5f03d7be7f83c827a19e31e6e2356d3a14",
-    "styles.css": "0ddc34cf621c5f15414a9ce19d27802017f0f7e4a509f44ad55c7cc06ef88cc5",
+    "styles.css": "9bfd80757173481843e0e00e82e5c696527580d78f9d9a12b2b7e8b55389da22",
     "favicon.svg": "7cfd85d797a554b14801cbc7211d81cd3bb13100d470baa1997906f38ad7c440",
     "README.md": "63b5ea34c87b8bdeedceae177d94488b94d7f812bc76611070bde9d21394fffb"
   }

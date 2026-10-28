@@ -303,3 +303,27 @@ main{width:100%;max-width:none;min-width:0;padding:16px 20px 0;margin:0}
 .context-risk{grid-column:1/-1;margin:0;font-size:11px;line-height:1.6;color:#6b7890}
 @media(min-width:1100px) and (max-height:850px){.design-principle{padding:5px 0;font-size:11px}}
 @media(max-width:600px){.design-principle{grid-template-columns:64px minmax(0,1fr);gap:10px}}
+
+/* One-time scale discovery, with an always-available help entry. */
+.scale-help-button{font-size:11px;padding:0;line-height:1.6}
+.scale-help-dialog{width:min(420px,calc(100vw - 32px));padding:24px}
+.scale-help-dialog h2{font-size:19px;margin:0;line-height:1.5}
+.scale-help-dialog .dialog-head{gap:16px}
+.scale-help-actions{display:flex;justify-content:flex-end;margin-top:24px}
+
+.hover-demo{display:block;width:100%;height:auto;margin-top:16px;font-size:12px}
+.hover-demo text{font-family:inherit;font-size:12px}
+.hover-demo-card{opacity:0;transform:translateY(5px)}
+.hover-demo-cursor{transform:translate(290px,216px)}
+.hover-demo-focus{opacity:0}
+.scale-help-dialog[open] .hover-demo-cursor{animation:scale-demo-cursor 5s ease-in-out infinite}
+.scale-help-dialog[open] .hover-demo-card{animation:scale-demo-card 5s ease-in-out infinite}
+.scale-help-dialog[open] .hover-demo-focus{animation:scale-demo-focus 5s ease-in-out infinite}
+@keyframes scale-demo-cursor{0%,10%{transform:translate(290px,216px)}30%,75%{transform:translate(180px,180px)}92%,100%{transform:translate(290px,216px)}}
+@keyframes scale-demo-card{0%,34%,90%,100%{opacity:0;transform:translateY(5px)}42%,77%{opacity:1;transform:translateY(0)}}
+@keyframes scale-demo-focus{0%,30%,90%,100%{opacity:0}38%,77%{opacity:1}}
+@media(prefers-reduced-motion:reduce){
+ .scale-help-dialog[open] .hover-demo-cursor{animation:none;transform:translate(180px,180px)}
+ .scale-help-dialog[open] .hover-demo-card{animation:none;opacity:1;transform:none}
+ .scale-help-dialog[open] .hover-demo-focus{animation:none;opacity:1}
+}

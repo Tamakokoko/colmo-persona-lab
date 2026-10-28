@@ -276,6 +276,16 @@
     v.high.forEach((value,i)=>{const[x,y]=point(i,value);const dot=svgNode('circle',{cx:x,cy:y,r:4.8,class:'active-dot'},selected);const title=svgNode('title',{},dot);const[l,h]=selectedBounds(i);title.textContent=axes[i].name+'：'+(l===h?levelName(i,h):levelName(i,l)+' 至 '+levelName(i,h));if(Math.abs(v.low[i]-value)>.0001){const[a,b]=point(i,v.low[i]);svgNode('circle',{cx:a,cy:b,r:4.4,class:'active-dot'},selected);}});
   }
   function transition(duration=520) {cancelAnimationFrame(animation);const target=targetVisual();if(!visual||matchMedia('(prefers-reduced-motion: reduce)').matches||duration===0){visual=target;draw(visual);return;}const from=clone(visual),start=performance.now();function frame(now){const t=Math.min(1,(now-start)/duration),e=t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;visual={};for(const key of Object.keys(target))visual[key]=Array.isArray(target[key])?target[key].map((v,i)=>from[key][i]+(v-from[key][i])*e):from[key]+(target[key]-from[key])*e;draw(visual);if(t<1)animation=requestAnimationFrame(frame);}animation=requestAnimationFrame(frame);}
+  let scaleHelpSeen = false;
+  function openScaleHelp() {
+    hideScale();
+    if (!$('scaleHelpDialog').open) $('scaleHelpDialog').showModal();
+  }
+  $('editorHint').addEventListener('click', openScaleHelp);
+  $('closeScaleHelp').addEventListener('click', () => $('scaleHelpDialog').close());
+  $('scaleHelpDialog').addEventListener('close', () => {
+    scaleHelpSeen = true;
+  });
   function select(key) {
     if(!ids.includes(key))return;hideScale();active=key;updateTabs();
     const overview=key==='overview';
@@ -287,7 +297,7 @@
     if(overview){$('compareToggle').disabled=false;$('radarTitle').textContent='六类策略八维雷达图总览';drawOverview();return;}
     $('contextRationale').hidden=key==='prototype';
     renderDesignPrinciples(key);
-    const proto=key==='prototype',risk=key==='D';$('activeLegend').textContent=proto?'原型参照线':key+' · '+catalog.strategies[key].short;$('baseLegend').hidden=proto||!$('compareToggle').checked;$('bandLegend').hidden=true;$('compareToggle').disabled=proto;$('editorTitle').textContent=proto?'人格原型':key+' · '+catalog.strategies[key].title;$('editorHint').textContent='悬停查看含义 · 点击或拖动调值';
+    const proto=key==='prototype',risk=key==='D';$('activeLegend').textContent=proto?'原型参照线':key+' · '+catalog.strategies[key].short;$('baseLegend').hidden=proto||!$('compareToggle').checked;$('bandLegend').hidden=true;$('compareToggle').disabled=proto;$('editorTitle').textContent=proto?'人格原型':key+' · '+catalog.strategies[key].title;
     $('contextLetter').textContent=proto?'◎':key;
     $('contextTitle').textContent=proto?'理性、专业、克制的高端管家':catalog.strategies[key].title;
     $('prototypeIntroduction').hidden=!proto;
@@ -297,6 +307,7 @@
     $('radarDescription').textContent=axes.map((axis,i)=>{const[l,h]=selectedBounds(i);return axis.name+' '+levelName(i,l)+(l!==h?' 至 '+levelName(i,h):'');}).join('；');
     if(risk)renderRiskContext();
     renderEditor();transition();
+    if (!scaleHelpSeen) openScaleHelp();
   }
   function renderDesignPrinciples(key){
     const list=$('contextDimensionChange');list.replaceChildren();
@@ -338,5 +349,5 @@
   $('caseReferenceButton').addEventListener('click',()=>{hideScale();window.COLMO_CASE_UI.open(active,activeRisk);});
   $('helpButton').addEventListener('click',()=>$('helpDialog').showModal());$('closeHelp').addEventListener('click',()=>$('helpDialog').close());$('helpDialog').addEventListener('click',e=>{if(e.target===$('helpDialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
   window.addEventListener('pagehide',()=>{clearTimeout(saveTimer);if(storageAvailable)try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){/* Export remains available. */}});
-  createRiskTabs();createTabs();createOverview();buildGrid();buildRadarHover();select('overview');if(loadMessage)toast(loadMessage);$('saveState').textContent=JSON.stringify(state)===JSON.stringify(defaults)?'Figma 默认定位':'本机调整稿';
+  createRiskTabs();createTabs();createOverview();buildGrid();buildRadarHover();select('overview');openScaleHelp();if(loadMessage)toast(loadMessage);$('saveState').textContent=JSON.stringify(state)===JSON.stringify(defaults)?'Figma 默认定位':'本机调整稿';
 })();

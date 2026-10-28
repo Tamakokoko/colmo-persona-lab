@@ -7,13 +7,13 @@
   <meta name="description" content="COLMO 八维人格与六类 AI 表达策略的交互式工作坊。">
   <title>COLMO · 人格表达实验台</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=20261028-top-principles-verified">
-  <script defer src="data.js?v=20261028-top-principles-verified"></script>
-  <script defer src="scales.js?v=20261028-top-principles-verified"></script>
+  <link rel="stylesheet" href="styles.css?v=20261028-hover-demo">
+  <script defer src="data.js?v=20261028-strategy-definitions"></script>
+  <script defer src="scales.js?v=20261028-feedback-example"></script>
   <script defer src="cases.js?v=20261028-scale-sync"></script>
   <script defer src="case-assets.js?v=20261022-report-sync"></script>
   <script defer src="case-ui.js?v=20261022-report-sync"></script>
-  <script defer src="app.js?v=20261028-top-principles-verified"></script>
+  <script defer src="app.js?v=20261028-auto-hover-demo"></script>
 </head>
 <body>
   <header class="topbar">
@@ -56,7 +56,7 @@
       </section>
       <section id="editorPanel" class="panel editor-panel" aria-labelledby="editorTitle">
         <div class="panel-head"><div><h2 id="editorTitle">调整八维策略</h2></div><button id="resetButton" class="quiet reset-button">↺ 重置本页</button></div>
-        <div class="editor-meta"><span id="editorHint">拖动圆点或点击刻度，左侧实时同步。</span><div class="category-keys"><span class="appearance">形象表达</span><span class="communication">沟通表达</span><span class="action">行动方式</span></div></div>
+        <div class="editor-meta"><button id="editorHint" class="text-button scale-help-button" aria-haspopup="dialog" aria-controls="scaleHelpDialog">如何查看刻度？</button><div class="category-keys"><span class="appearance">形象表达</span><span class="communication">沟通表达</span><span class="action">行动方式</span></div></div>
         <div id="axesEditor"></div>
         <p class="scale-source">刻度含义与情境：<a href="https://www.figma.com/design/H3Ve4kkJF3QuIETEv5bLzy?node-id=1883-8704" target="_blank" rel="noopener noreferrer">01 形象表达与行动方式 ↗</a> · <a href="https://www.figma.com/design/H3Ve4kkJF3QuIETEv5bLzy?node-id=1883-8880" target="_blank" rel="noopener noreferrer">02 沟通表达 ↗</a></p>
         <div class="editor-footer"><span id="changeCount">与人格原型相比，0 个维度变化</span><span id="storageNote">修改自动保存在当前浏览器</span></div>
@@ -67,6 +67,26 @@
   </div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <dialog id="caseDialog" class="case-dialog" aria-labelledby="caseDialogHeading"><header class="case-dialog-header"><h2 id="caseDialogHeading">案例参考</h2><button id="closeCases" class="quiet" aria-label="关闭案例参考" autofocus>✕</button></header><nav id="caseTabs" class="case-tabs" aria-label="选择策略案例"></nav><nav id="riskCaseTabs" class="risk-tabs case-risk-tabs" role="tablist" aria-label="风险案例等级" hidden></nav><nav id="caseVariantTabs" class="case-variant-tabs" aria-label="选择案例" hidden></nav><div id="caseContent" class="case-content"></div></dialog>
+  <dialog id="scaleHelpDialog" class="scale-help-dialog" aria-labelledby="scaleHelpTitle">
+    <div class="dialog-head"><h2 id="scaleHelpTitle">悬停可查看定义与案例</h2><button id="closeScaleHelp" class="quiet" aria-label="关闭刻度说明">✕</button></div>
+    <svg class="hover-demo" viewBox="0 0 360 235" role="img" aria-labelledby="hoverDemoTitle">
+      <title id="hoverDemoTitle">鼠标移到刻度上，弹出包含定义与案例的说明卡片</title>
+      <path d="M40 180H320" stroke="#dbe3ef" stroke-width="2"/>
+      <g fill="#a8b7cc"><circle cx="40" cy="180" r="4"/><circle cx="110" cy="180" r="4"/><circle cx="180" cy="180" r="4"/><circle cx="250" cy="180" r="4"/><circle cx="320" cy="180" r="4"/></g>
+      <g class="hover-demo-labels" fill="#8998ac" text-anchor="middle"><text x="40" y="207">L1</text><text x="110" y="207">L2</text><text x="180" y="207">L3</text><text x="250" y="207">L4</text><text x="320" y="207">L5</text></g>
+      <circle class="hover-demo-focus" cx="180" cy="180" r="7" fill="#2864dc"/>
+      <g class="hover-demo-card">
+        <rect x="90" y="20" width="228" height="124" rx="10" fill="white" stroke="#dce5f1"/>
+        <path d="M172 144L180 152L188 144" fill="white" stroke="#dce5f1"/>
+        <path d="M172 144H188" stroke="white" stroke-width="2"/>
+        <text x="108" y="48" fill="#2864dc" font-weight="600">L3</text>
+        <text x="108" y="75" fill="#42566f">定义</text><path d="M148 71H294M148 81H265" stroke="#dde5ef" stroke-width="5" stroke-linecap="round"/>
+        <text x="108" y="113" fill="#42566f">案例</text><path d="M148 109H294M148 119H278" stroke="#dde5ef" stroke-width="5" stroke-linecap="round"/>
+      </g>
+      <g class="hover-demo-cursor"><path d="M0 0L2 25L8 18L13 29L18 27L13 16L23 16Z" fill="#253c5c" stroke="white" stroke-width="2" stroke-linejoin="round"/></g>
+    </svg>
+    <form method="dialog" class="scale-help-actions"><button class="primary" autofocus>知道了</button></form>
+  </dialog>
   <dialog id="helpDialog"><div class="dialog-head"><h2>从本地网页到分享链接</h2><button id="closeHelp" class="quiet" aria-label="关闭">✕</button></div><p>Git 保存版本，GitHub 存放代码，GitHub Pages 把它变成可访问的网页。</p><ol><li>在 GitHub 新建仓库，例如 <code>colmo-persona-lab</code>。</li><li>用 <strong>Add file → Upload files</strong> 上传网页文件夹内的文件，确保 <code>index.html</code> 位于仓库根目录。</li><li>在 <strong>Settings → Pages</strong> 中选择 <strong>Deploy from a branch → main → / (root)</strong>，保存后等待生成访问链接。</li></ol><p class="small">发布的是文件中的默认值。工作坊里编辑的参数只保存在本机；请导出 JSON 交给其他人导入。发布前确认仓库与网页的可见范围。</p><a href="https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site" target="_blank" rel="noopener noreferrer">查看 GitHub 官方说明 ↗</a></dialog>
 </body>
 </html>
