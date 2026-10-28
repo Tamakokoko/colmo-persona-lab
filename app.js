@@ -134,7 +134,7 @@
     track.append(rangeInput(i,field,label));outer.append(track);row.append(outer);}
   function makeScaleEntry(i,value,label='') {
     const scale = scales[axes[i].id];
-    const [name,text,example] = scale.levels[value-axes[i].min];
+    const [name,text,example,source] = scale.levels[value-axes[i].min];
     const entry=document.createElement('div');entry.className='scale-entry';entry.dataset.level=value;
     const heading=document.createElement('div');heading.className='scale-entry-heading';
     const code=document.createElement('span');code.className='scale-code';code.textContent=level(i,value);
@@ -145,9 +145,14 @@
     const definitionLabel=document.createElement('strong');definitionLabel.textContent='刻度定义';
     explanation.append(definitionLabel,document.createTextNode(text));
     const illustration=document.createElement('p');illustration.className='scale-example';
-    const exampleLabel=document.createElement('strong');exampleLabel.textContent='设计参照 · '+scale.scenario;
+    const exampleLabel=document.createElement('strong');exampleLabel.textContent='设计参照 · '+(source?.scenario||scale.scenario)+(source?.strategy?' · '+source.strategy+' 类策略同例':'');
     illustration.append(exampleLabel,document.createTextNode(example));
-    entry.append(heading,explanation,illustration);return entry;
+    const scenario=document.createElement('p');scenario.className='scale-scenario';
+    const scenarioLabel=document.createElement('strong');scenarioLabel.textContent='共同情境';
+    scenario.append(scenarioLabel,document.createTextNode(scale.context||scale.scenario));
+    entry.append(heading,explanation,scenario,illustration);
+    if(scale.comparisonNote){const note=document.createElement('p');note.className='scale-comparison-note';note.textContent=scale.comparisonNote;entry.append(note);}
+    return entry;
   }
   let popoverState=null;
   const popover=document.createElement('div');popover.id='scale-popover';popover.className='scale-popover';
@@ -295,6 +300,7 @@
   }
   function renderDesignPrinciples(key){
     const list=$('contextDimensionChange');list.replaceChildren();
+    $('strategyExample').textContent=catalog.strategies[key]?.example||'';
     const rows=catalog.strategies[key]?.designPrinciples||[];
     for(const [name,principle] of rows){
       const row=document.createElement('div');row.className='design-principle';
@@ -332,5 +338,5 @@
   $('caseReferenceButton').addEventListener('click',()=>{hideScale();window.COLMO_CASE_UI.open(active,activeRisk);});
   $('helpButton').addEventListener('click',()=>$('helpDialog').showModal());$('closeHelp').addEventListener('click',()=>$('helpDialog').close());$('helpDialog').addEventListener('click',e=>{if(e.target===$('helpDialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
   window.addEventListener('pagehide',()=>{clearTimeout(saveTimer);if(storageAvailable)try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){/* Export remains available. */}});
-  createRiskTabs();createTabs();createOverview();buildGrid();buildRadarHover();select('overview');if(loadMessage)toast(loadMessage);$('saveState').textContent='已载入本机草稿';
+  createRiskTabs();createTabs();createOverview();buildGrid();buildRadarHover();select('overview');if(loadMessage)toast(loadMessage);$('saveState').textContent=JSON.stringify(state)===JSON.stringify(defaults)?'Figma 默认定位':'本机调整稿';
 })();

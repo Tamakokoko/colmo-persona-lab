@@ -59,6 +59,8 @@ main{padding-top:22px}.topbar{height:68px}.wordmark span{letter-spacing:.5px;fon
 .scale-popover{pointer-events:none;width:min(400px,calc(100vw - 24px))}
 .scale-entry p>strong{display:block;font-size:10px;font-weight:600;color:#7c8ba0;margin-bottom:3px}
 .scale-example{border-top:1px solid #e6edf5;padding-top:9px}
+.scale-scenario strong{display:block;font-size:11px;color:#72839b;margin-bottom:3px}
+.scale-popover .scale-comparison-note{font-size:11px;line-height:1.6;color:#63738b}
 .radar-tick-target{fill:transparent;stroke:transparent;stroke-width:1.2;pointer-events:all;cursor:help}
 .radar-tick-target:hover,.radar-tick-target:focus-visible{stroke:var(--tick-color);outline:none}
 /* Overview and strategy-first reading order. */
@@ -287,7 +289,13 @@ main{width:100%;max-width:none;min-width:0;padding:16px 20px 0;margin:0}
 .case-variant-tabs button:focus-visible { outline:2px solid var(--case-color); outline-offset:2px; }
 
 /* Strategy intent translated into the three established dimension groups. */
-.context-rationale{display:block;padding-top:0;border-top:0}
+.context-rationale{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(260px,1fr);gap:24px;padding-top:0;border-top:0}
+.strategy-example{align-self:start;padding:8px 0 8px 20px;border-left:1px solid var(--line)}
+.strategy-example h3{margin:0 0 7px;font-size:12px;font-weight:600;color:var(--strategy-color)}
+.strategy-example blockquote{margin:0;font-size:13px;line-height:1.75;color:#263d59}
+.strategy-example blockquote::before{content:'“'}
+.strategy-example blockquote::after{content:'”'}
+@media(max-width:850px){.context-rationale{grid-template-columns:1fr;gap:12px}.strategy-example{border-left:0;border-top:1px solid var(--line);padding:12px 0 0}}
 .design-principles{margin:0}
 .design-principle{display:grid;grid-template-columns:78px minmax(0,1fr);gap:16px;padding:8px 0;border-top:1px solid var(--line);font-size:12px;line-height:1.65}
 .design-principle dt{font-weight:600;color:var(--strategy-color)}

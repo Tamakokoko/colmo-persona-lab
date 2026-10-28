@@ -1,15 +1,15 @@
 {
-  "release": "20261028-concise-principles",
+  "release": "20261028-top-principles-verified",
   "files": {
-    "index.html": "2ae3731abeb9649074d5edf5fdf64a0438031b4711f18009b3c05cb1a73d0131",
-    "app.js": "648ac4debe3dab5c8c52c526cc009e9496d9e1626cf3abf38f3b0795087d9cb9",
-    "data.js": "521d8976404c9add3bcce435b6d9a8dddb02c4cbe51722a80d9d69cd3708f6c0",
-    "scales.js": "361093f414fd18e749fd61cb36b9561a9ee08e1f9bec119a7633f943bdc8c6d2",
+    "index.html": "3d314ce275c73f82ba5fd740e7542aeae2ff8c4990f6cd2c69b2663ed1bff851",
+    "app.js": "db0b6da128ec1e19e0cc5d2cf2158cf844b314a863d48ffdee6dd6e2a4ffede7",
+    "data.js": "4f6b785876608bb5d9e46b312c0cc5894ae1159e5d242c8ef0528ae554437d92",
+    "scales.js": "8d78a3d3b71bf36d7e16610a641c4fba2c80c843c435f44872bf48b0069d7c64",
     "cases.js": "2227901abb0189c0c168807f1581481ab2edfefae4d8a1997b74592c2e93483f",
     "case-ui.js": "b67f5bd82bf5b03411f4b5541ffae38a73ce818dfd4996312927675c68400c4a",
     "case-assets.js": "c24ef1bfa9d1a6093a61fe738110be5f03d7be7f83c827a19e31e6e2356d3a14",
-    "styles.css": "1a7545acaeeae07c63b014cefa77fec1860af6de3d2bcddedabcc05538b4493d",
+    "styles.css": "0ddc34cf621c5f15414a9ce19d27802017f0f7e4a509f44ad55c7cc06ef88cc5",
     "favicon.svg": "7cfd85d797a554b14801cbc7211d81cd3bb13100d470baa1997906f38ad7c440",
-    "README.md": "d2a0469e713aea59c0d69f27c37904516faa0cdbe4c208be34a72a566d2f8376"
+    "README.md": "63b5ea34c87b8bdeedceae177d94488b94d7f812bc76611070bde9d21394fffb"
   }
 }
