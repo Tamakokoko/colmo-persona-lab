@@ -13,7 +13,7 @@
   const $ = id => document.getElementById(id);
   const STORAGE_KEY = 'colmo-persona-lab-v3';
   const LEGACY_STORAGE_KEY = 'colmo-persona-lab-v1';
-  const ids = ['overview','prototype', ...Object.keys(catalog.strategies)];
+  const ids = ['overview', ...Object.keys(catalog.strategies)];
   let state = clone(defaults), active = 'A', visual = null, animation = 0, saveTimer = 0, toastTimer = 0;
   let storageAvailable = true;
   const strategyColors={A:'#2864dc',B:'#8050bd',C:'#148b8d',D:'#d68a19',E:'#cd507c',F:'#6475bc'};
@@ -112,7 +112,7 @@
       const toggle=document.createElement('input');toggle.type='checkbox';toggle.checked=true;toggle.dataset.strategy=key;toggle.setAttribute('aria-label',key+' '+strategy.title+' 显示开关');
       toggle.addEventListener('change',()=>setStrategyVisible(key,toggle.checked));
       const track=document.createElement('span');const status=document.createElement('b');status.className='visibility-text';status.textContent='显示';visibility.append(toggle,track,status);
-      row.append(code,button,visibility);const purpose=document.createElement('p');purpose.className='overview-purpose';purpose.textContent=strategy.personalityFocus;const definition=document.createElement('p');definition.textContent=strategy.focusRationale;card.append(row,purpose,definition);$('overviewList').append(card);
+      row.append(code,button,visibility);const definition=document.createElement('p');definition.textContent=strategy.definition;card.append(row,definition);$('overviewList').append(card);
       const label=document.createElement('label');label.className='overview-toggle';label.style.setProperty('--strategy-color',strategyColors[key]);
       const input=document.createElement('input');input.type='checkbox';input.checked=true;input.dataset.strategy=key;input.setAttribute('aria-label','显示 '+key+' '+strategy.title);
       input.addEventListener('change',()=>setStrategyVisible(key,input.checked));
@@ -125,7 +125,6 @@
     const range=$('rangeLayer'),baseline=$('baselineLayer'),selected=$('activeLayer');range.replaceChildren();baseline.replaceChildren();selected.replaceChildren();
     baseline.setAttribute('opacity','1');
     if($('envelopeToggle').checked){svgNode('path',{d:bandPath(state.baseline.low,state.baseline.high),class:'range-fill','fill-rule':'evenodd'},range);for(const values of [state.baseline.low,state.baseline.high])svgNode('path',{d:shape(values),class:'range-outline'},range);}
-    if($('compareToggle').checked){svgNode('path',{d:shape(state.baseline.center),class:'baseline-line'},baseline);state.baseline.center.forEach((value,i)=>{const[x,y]=point(i,value);svgNode('circle',{cx:x,cy:y,r:4,class:'baseline-dot'},baseline);});}
     Object.keys(catalog.strategies).forEach(key=>{
       const s=state.strategies[key],color=strategyColors[key],group=svgNode('g',{'data-strategy':key,opacity:visibleStrategies.has(key)?1:0},selected);
       const lo=key==='D'?s.low:s.values,hi=key==='D'?s.high:s.values;
@@ -150,8 +149,8 @@
     input.addEventListener('input',()=>{edit(i,field,Number(input.value));if(popoverState?.anchor===input){popoverState.value=Number(input.value);paintScale();}});
     return input;
   }
-  function createTrack(row,i,field,label) {const outer=document.createElement('div');const track=document.createElement('div');track.className='track-wrap';track.innerHTML='<div class="track-line"></div><div class="allowed-segment"></div><div class="strategy-segment"></div><div class="baseline-marker"></div>';for(let value=axes[i].min;value<=axes[i].max;value++){
-      const dot=document.createElement('span');dot.className='track-tick-dot';dot.dataset.value=value;dot.setAttribute('aria-hidden','true');dot.style.left=pct(i,value)+'%';track.insertBefore(dot,track.querySelector('.baseline-marker'));
+  function createTrack(row,i,field,label) {const outer=document.createElement('div');const track=document.createElement('div');track.className='track-wrap';track.innerHTML='<div class="track-line"></div><div class="allowed-segment"></div><div class="strategy-segment"></div>';for(let value=axes[i].min;value<=axes[i].max;value++){
+      const dot=document.createElement('span');dot.className='track-tick-dot';dot.dataset.value=value;dot.setAttribute('aria-hidden','true');dot.style.left=pct(i,value)+'%';track.append(dot);
     }
     track.append(rangeInput(i,field,label));outer.append(track);row.append(outer);}
   function makeScaleEntry(i,value,label='') {
@@ -254,7 +253,7 @@
   }
   function refreshRows() {
     axes.forEach((axis,i)=>{const row=$('axis-'+i);const[low,high]=selectedBounds(i);row.querySelector('output').textContent=low===high?levelName(i,low):level(i,low)+'–'+level(i,high)+' · '+axis.ticks[low-axis.min]+' → '+axis.ticks[high-axis.min];row.querySelectorAll('.axis-input').forEach(input=>{let value=active==='prototype'?state.baseline.center[i]:active==='D'?state.strategies.D[input.dataset.field][i]:low;input.value=value;input.setAttribute('aria-valuetext',levelName(i,value));});row.querySelectorAll('.allowed-segment').forEach(el=>{el.style.left=pct(i,state.baseline.low[i])+'%';el.style.width=(pct(i,state.baseline.high[i])-pct(i,state.baseline.low[i]))+'%';});row.querySelectorAll('.strategy-segment').forEach(el=>{el.style.left=pct(i,low)+'%';el.style.width=(pct(i,high)-pct(i,low))+'%';});row.querySelectorAll('.baseline-marker').forEach(el=>el.style.left=pct(i,state.baseline.center[i])+'%');row.querySelectorAll('.track-tick-dot').forEach(dot=>{const value=Number(dot.dataset.value);dot.classList.toggle('outside-range',value<editingBounds(i)[0]||value>editingBounds(i)[1]);});row.querySelectorAll('.tick-label').forEach(b=>{const v=Number(b.dataset.value);b.classList.toggle('selected',v>=low&&v<=high);b.classList.toggle('outside-range',v<editingBounds(i)[0]||v>editingBounds(i)[1]);});row.querySelectorAll('select').forEach(s=>{s.value=state.baseline[s.dataset.field][i];Array.from(s.options).forEach(op=>op.disabled=s.dataset.field==='low'?Number(op.value)>state.baseline.high[i]:Number(op.value)<state.baseline.low[i]);});});
-    let changed=0;axes.forEach((_,i)=>{const[l,h]=selectedBounds(i);if(l!==state.baseline.center[i]||h!==state.baseline.center[i])changed++;});$('changeCount').textContent=active==='prototype'?'原型参照线 / 允许范围':('与原型差异：'+changed+' 维');$('radarDescription').textContent=axes.map((axis,i)=>{const[l,h]=selectedBounds(i);return axis.name+' '+levelName(i,l)+(l!==h?' 至 '+levelName(i,h):'');}).join('；');updateTabs();
+    $('changeCount').textContent=active==='D'?'风险策略独立展示，不计入常规边界':'在常规允许范围内调整具体表达';$('radarDescription').textContent=axes.map((axis,i)=>{const[l,h]=selectedBounds(i);return axis.name+' '+levelName(i,l)+(l!==h?' 至 '+levelName(i,h):'');}).join('；');updateTabs();
   }
   function constrainStrategies() {let count=0;for(const [key,strategy] of Object.entries(state.strategies))if(key!=='D')for(const values of Object.values(strategy))values.forEach((v,i)=>{const next=clamp(v,state.baseline.low[i],state.baseline.high[i]);if(v!==next)count++;values[i]=next;});syncRiskBounds();return count;}
   function syncRiskBounds(){const s=state.strategies.D;axes.forEach((_,i)=>{s.low[i]=Math.min(...riskKeys.map(k=>s[k][i]));s.high[i]=Math.max(...riskKeys.map(k=>s[k][i]));});}
@@ -287,13 +286,12 @@
       }
     });
   }
-  function targetVisual() {const b=state.baseline;const lo=active==='prototype'?b.center:active==='D'?state.strategies.D[activeRisk]:state.strategies[active].values;const hi=active==='prototype'?b.center:active==='D'?state.strategies.D[activeRisk]:state.strategies[active].values;return{low:[...lo],high:[...hi],center:[...b.center],baseLow:[...b.low],baseHigh:[...b.high],compare:active!=='prototype'&&$('compareToggle').checked?1:0,envelope:$('envelopeToggle').checked?1:0};}
+  function targetVisual() {const b=state.baseline;const lo=active==='prototype'?b.center:active==='D'?state.strategies.D[activeRisk]:state.strategies[active].values;const hi=active==='prototype'?b.center:active==='D'?state.strategies.D[activeRisk]:state.strategies[active].values;return{low:[...lo],high:[...hi],center:[...b.center],baseLow:[...b.low],baseHigh:[...b.high],envelope:$('envelopeToggle').checked?1:0};}
   function draw(v) {
     const range=$('rangeLayer'),baseline=$('baselineLayer'),selected=$('activeLayer');range.replaceChildren();baseline.replaceChildren();selected.replaceChildren();
     const envelope=svgNode('g',{opacity:v.envelope},range);svgNode('path',{d:bandPath(v.baseLow,v.baseHigh),class:'range-fill','fill-rule':'evenodd'},envelope);for(const vals of [v.baseLow,v.baseHigh])svgNode('path',{d:shape(vals),class:'range-outline'},envelope);
     // Only a nonzero lower/upper interval gets a fill. Ordinary profiles remain unfilled.
     const hasBand=v.low.some((x,i)=>Math.abs(x-v.high[i])>.0001);if(hasBand)svgNode('path',{d:bandPath(v.low,v.high),class:'band-fill','fill-rule':'evenodd'},range);
-    baseline.setAttribute('opacity',v.compare);svgNode('path',{d:shape(v.center),class:'baseline-line'},baseline);v.center.forEach((value,i)=>{const[x,y]=point(i,value);svgNode('circle',{cx:x,cy:y,r:4,class:'baseline-dot'},baseline);});
     svgNode('path',{d:shape(v.high),class:'active-line','data-contour':'upper'},selected);if(hasBand)svgNode('path',{d:shape(v.low),class:'active-line','data-contour':'lower'},selected);
     v.high.forEach((value,i)=>{const[x,y]=point(i,value);const dot=svgNode('circle',{cx:x,cy:y,r:4.8,class:'active-dot'},selected);const title=svgNode('title',{},dot);const[l,h]=selectedBounds(i);title.textContent=axes[i].name+'：'+(l===h?levelName(i,h):levelName(i,l)+' 至 '+levelName(i,h));if(Math.abs(v.low[i]-value)>.0001){const[a,b]=point(i,v.low[i]);svgNode('circle',{cx:a,cy:b,r:4.4,class:'active-dot'},selected);}});
   }
@@ -316,10 +314,10 @@
     document.querySelector('.workspace').classList.toggle('is-overview',overview);
     document.documentElement.style.setProperty('--strategy-color',strategyColors[key]||'#245de7');
     $('riskTabs').hidden=key!=='D';
-    if(overview){$('compareToggle').disabled=false;$('radarTitle').textContent='六类策略八维雷达图总览';drawOverview();return;}
+    if(overview){$('radarTitle').textContent='六类策略八维雷达图总览';drawOverview();return;}
     $('contextRationale').hidden=key==='prototype';
     renderDesignPrinciples(key);
-    const proto=key==='prototype',risk=key==='D';$('activeLegend').textContent=proto?'原型参照线':key+' · '+catalog.strategies[key].short;$('baseLegend').hidden=proto||!$('compareToggle').checked;$('bandLegend').hidden=true;$('compareToggle').disabled=proto;$('editorTitle').textContent=proto?'人格原型':key+' · '+catalog.strategies[key].title;
+    const proto=key==='prototype',risk=key==='D';$('activeLegend').textContent=proto?'原型参照线':key+' · '+catalog.strategies[key].short;$('bandLegend').hidden=true;$('editorTitle').textContent=proto?'人格原型':key+' · '+catalog.strategies[key].title;
     $('contextLetter').textContent=proto?'◎':key;
     $('contextTitle').textContent=proto?window.COLMO_PERSONA.title:catalog.strategies[key].title;
     if(proto)$('prototypeIntroduction').textContent=window.COLMO_PERSONA.description;
@@ -357,12 +355,7 @@
       exampleHost.append(context,makeExampleResponse(example.do));
     }
     const strategy=catalog.strategies[key];
-    if(strategy?.personalityFocus){
-      const row=document.createElement('div');row.className='design-principle personality-focus';
-      const title=document.createElement('dt');title.textContent='人格侧重';
-      const text=document.createElement('dd');text.textContent=strategy.personalityFocus;
-      row.append(title,text);list.append(row);
-    }
+
     const rows=strategy?.designPrinciples||[];
     for(const [name,principle] of rows){
       const row=document.createElement('div');row.className='design-principle';
@@ -433,7 +426,7 @@
   }
   function appendRangeGuide(host,guide){
     const section=document.createElement('section');section.className='axis-range-guide';
-    const title=document.createElement('h4');title.textContent='白皮书原型范围 · '+guide.range;section.append(title);
+    const title=document.createElement('h4');title.textContent='常规允许范围 · '+guide.range;section.append(title);
     const addBlock=(block)=>{const article=document.createElement('div');article.className='axis-guide-block';const h=document.createElement('h5');h.textContent=block.title;article.append(h);for(const text of block.paragraphs){const p=document.createElement('p');p.textContent=text;article.append(p);}section.append(article);};
     guide.blocks.forEach(addBlock);
     const h=document.createElement('h4');h.textContent='区间内随情境调整表达';section.append(h);guide.adjustments.forEach(addBlock);
@@ -497,10 +490,10 @@
     if(active==='overview')drawOverview();
   }
   $('allStrategiesToggle').addEventListener('change',e=>setAllStrategiesVisible(e.target.checked));
-  $('compareToggle').addEventListener('change',()=>{if(active==='overview'){drawOverview();return;}$('baseLegend').hidden=active==='prototype'||!$('compareToggle').checked;transition(250);});$('envelopeToggle').addEventListener('change',()=>{if(active==='overview')drawOverview();else transition(250);});
+  $('envelopeToggle').addEventListener('change',()=>{if(active==='overview')drawOverview();else transition(250);});
   $('resetButton').addEventListener('click',()=>{if(active==='prototype'){state.baseline=clone(defaults.baseline);constrainStrategies();}else{if(active==='D')state.strategies.D[activeRisk]=[...defaults.strategies.D[activeRisk]];else state.strategies[active]=clone(defaults.strategies[active]);constrainStrategies();}refreshRows();transition();save();toast('已恢复本页默认刻度。');});
-  $('exportButton').addEventListener('click',()=>{const data={...clone(state),exportedAt:new Date().toISOString()};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='COLMO-persona-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('已导出原型与全部六类策略。');});
-  $('importButton').addEventListener('click',()=>$('importFile').click());$('importFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>1000000)throw new Error('请选择小于 1 MB 的参数文件。');const data=validate(JSON.parse(await file.text()));state=data;if(active==='overview')drawOverview();else{renderEditor();transition();}save();toast('已导入原型与六类策略。');}catch(error){toast(error instanceof SyntaxError?'不是有效的 JSON 文件。':error.message);}finally{e.target.value='';}});
+  $('exportButton').addEventListener('click',()=>{const data={...clone(state),exportedAt:new Date().toISOString()};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='COLMO-persona-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('已导出表达边界与全部六类策略。');});
+  $('importButton').addEventListener('click',()=>$('importFile').click());$('importFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>1000000)throw new Error('请选择小于 1 MB 的参数文件。');const data=validate(JSON.parse(await file.text()));state=data;if(active==='overview')drawOverview();else{renderEditor();transition();}save();toast('已导入表达边界与六类策略。');}catch(error){toast(error instanceof SyntaxError?'不是有效的 JSON 文件。':error.message);}finally{e.target.value='';}});
   $('caseReferenceButton').addEventListener('click',()=>{hideScale();window.COLMO_CASE_UI.open(active,activeRisk);});
   $('helpButton').addEventListener('click',()=>$('helpDialog').showModal());$('closeHelp').addEventListener('click',()=>$('helpDialog').close());$('helpDialog').addEventListener('click',e=>{if(e.target===$('helpDialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
   window.addEventListener('pagehide',()=>{clearTimeout(saveTimer);if(storageAvailable)try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){/* Export remains available. */}});

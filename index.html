@@ -7,14 +7,14 @@
   <meta name="description" content="COLMO 八维人格与六类 AI 表达策略的交互式工作坊。">
   <title>COLMO · 人格表达实验台</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=20261118-routine-boundaries">
-  <script defer src="data.js?v=20261118-routine-boundaries"></script>
+  <link rel="stylesheet" href="styles.css?v=20261118-boundary-ui">
+  <script defer src="data.js?v=20261118-boundary-ui"></script>
   <script defer src="scales.js?v=20261105-intensity-max-l3"></script>
   <script defer src="principles.js?v=20261106-persona-neutral"></script>
   <script defer src="cases.js?v=20261030-original-definitions"></script>
   <script defer src="case-assets.js?v=20261030-original-definitions"></script>
   <script defer src="case-ui.js?v=20261030-original-definitions"></script>
-  <script defer src="app.js?v=20261118-routine-boundaries"></script>
+  <script defer src="app.js?v=20261118-boundary-ui"></script>
 </head>
 <body>
   <header class="topbar">
@@ -22,7 +22,7 @@
     <div class="toolbar"><span class="save-state" id="saveState">工作坊草稿</span><button id="importButton" class="quiet">导入参数</button><button id="exportButton" class="primary">导出参数 <span aria-hidden="true">↗</span></button><input id="importFile" type="file" accept="application/json,.json" hidden></div>
   </header>
   <div class="app-shell">
-    <aside class="sidebar"><nav id="strategyTabs" class="strategy-tabs" aria-label="选择人格原型或表达策略"></nav></aside>
+    <aside class="sidebar"><nav id="strategyTabs" class="strategy-tabs" aria-label="选择表达策略"></nav></aside>
   <main>
     <h1 class="sr-only">COLMO 人格与表达策略</h1>
     <section id="strategyContext" class="panel strategy-context" aria-labelledby="contextTitle">
@@ -44,17 +44,16 @@
       <div class="chart-column">
         <section class="panel chart-panel" aria-labelledby="chartHeading">
           <div class="panel-head"><div><h2 id="chartHeading">八维人格定位</h2></div><button id="caseReferenceButton" class="case-reference-button" aria-haspopup="dialog" aria-controls="caseDialog">案例参考 <span aria-hidden="true">↗</span></button></div>
-          <div class="chart-options"><label class="switch"><input type="checkbox" id="compareToggle" checked><span></span>对比人格原型</label><label class="switch"><input type="checkbox" id="envelopeToggle" checked><span></span>常规允许范围</label></div>
+          <div class="chart-options"><div class="boundary-control"><label class="switch"><input type="checkbox" id="envelopeToggle" checked aria-describedby="boundaryDefinition"><span></span>常规允许范围</label><button type="button" class="boundary-help" aria-label="查看常规允许范围说明" aria-describedby="boundaryDefinition">?</button><div id="boundaryDefinition" class="boundary-tooltip" role="tooltip"><strong>什么是常规允许范围？</strong><p>排除极端风险状况后，COLMO AI 管家在日常服务中各表达维度允许调整的上下界。具体表达可随任务与用户状态在区间内变化，以保持角色一致；它不是固定的人格中心值。D 类风险策略独立展示，不用于扩大常规边界。</p></div></div></div>
           <p class="small boundary-scope">排除极端风险状况，只考虑常规状态下的人格表达边界。D 类风险策略单独展示。</p>
           <div class="radar-wrap"><svg id="radar" viewBox="0 0 640 590" role="group" aria-labelledby="radarTitle radarDescription"><title id="radarTitle">八维人格表达雷达图</title><desc id="radarDescription"></desc><g id="rangeLayer"></g><g id="gridLayer"></g><g id="baselineLayer"></g><g id="activeLayer"></g><g id="labelLayer"></g></svg></div>
-          <div id="detailLegend" class="legend"><span><i class="key-active"></i><b id="activeLegend">当前策略</b></span><span id="baseLegend"><i class="key-base"></i>原型参照线</span><span id="bandLegend" hidden><i class="key-band"></i>策略上下限</span></div>
+          <div id="detailLegend" class="legend"><span><i class="key-active"></i><b id="activeLegend">当前策略</b></span><span id="bandLegend" hidden><i class="key-band"></i>策略上下限</span></div>
           <div id="overviewLegend" class="overview-legend" hidden></div>
         </section>
 
       </div>
       <section id="overviewPanel" class="panel overview-panel" aria-labelledby="overviewHeading" hidden>
-        <div class="panel-head"><h2 id="overviewHeading">人格原型与六类策略</h2><label class="switch all-strategies-switch"><input id="allStrategiesToggle" type="checkbox" checked aria-label="显示全部策略"><span></span><b id="allStrategiesState">全部显示</b></label></div>
-        <div class="overview-prototype"><span>COLMO 人格原型</span><h3>沉稳、专业、体贴、可靠、有分寸的家庭管家</h3><p>简单的事利落处理，复杂的事耐心说明；关心落在具体帮助里，任务进度如实反馈，执行结果核实后交代，新的决定先征求意见。</p></div>
+        <div class="panel-head"><h2 id="overviewHeading">六类表达策略</h2><label class="switch all-strategies-switch"><input id="allStrategiesToggle" type="checkbox" checked aria-label="显示全部策略"><span></span><b id="allStrategiesState">全部显示</b></label></div>
         <div class="overview-list" id="overviewList"></div>
       </section>
       <section id="editorPanel" class="panel editor-panel" aria-labelledby="editorTitle">
@@ -67,7 +66,7 @@
         <div class="editor-meta"><button id="editorHint" class="text-button scale-help-button" aria-haspopup="dialog" aria-controls="scaleHelpDialog">如何查看刻度？</button><div class="category-keys"><span class="appearance">形象表达</span><span class="communication">沟通表达</span><span class="action">行动方式</span></div></div>
         <div id="axesEditor"></div>
         <p class="scale-source">刻度含义与情境：<a href="https://www.figma.com/design/H3Ve4kkJF3QuIETEv5bLzy?node-id=2238-2194" target="_blank" rel="noopener noreferrer">八维刻度定义 ↗</a> · <a href="https://www.figma.com/design/H3Ve4kkJF3QuIETEv5bLzy?node-id=2238-2374" target="_blank" rel="noopener noreferrer">沟通表达刻度 ↗</a></p>
-        <div class="editor-footer"><span id="changeCount">与人格原型相比，0 个维度变化</span><span id="storageNote">修改自动保存在当前浏览器</span></div>
+        <div class="editor-footer"><span id="changeCount">在允许范围内调整具体表达</span><span id="storageNote">修改自动保存在当前浏览器</span></div>
         </div>
         <div id="principlesPanel" class="principles-panel" role="tabpanel" aria-labelledby="principlesTab" tabindex="0" hidden></div>
       </section>

@@ -391,3 +391,17 @@ main{width:100%;max-width:none;min-width:0;padding:16px 20px 0;margin:0}
 
 /* Routine boundary scope, aligned with the November report. */
 .boundary-scope{margin:12px 20px 0;font-size:12px;line-height:1.6;color:#66758c;}
+
+/* Equal chart size across overview and strategy pages; context cannot squeeze it. */
+.tab:nth-child(2){margin-bottom:0}
+.radar-wrap{flex:none;width:100%;padding:4px 6px;max-width:684px;margin:0 auto}
+#radar{display:block;width:100%;height:auto;max-height:none;aspect-ratio:640/590}
+@media(min-width:1100px){
+  .app-shell{height:auto;min-height:calc(100dvh - 56px)}
+  main{display:block}.workspace{align-items:start;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr)}
+  .chart-panel{height:auto}.editor-panel,.overview-panel{overflow:visible}
+}
+.boundary-control{position:relative;display:flex;align-items:center;gap:8px}
+.boundary-help{display:grid;place-items:center;width:18px;height:18px;padding:0;border:1px solid #a7b9d4;border-radius:50%;color:#526d95;background:white;font-size:11px;cursor:help}
+.boundary-tooltip{display:none;position:absolute;top:100%;left:0;z-index:20;width:min(330px,calc(100vw - 130px));padding:16px;color:#344a68;background:#fff;border:1px solid #d5e0f2;border-radius:8px;box-shadow:0 8px 28px #20334c22;font-size:12px;line-height:1.8}
+.boundary-tooltip p{margin:6px 0 0}.boundary-control:hover .boundary-tooltip,.boundary-control:focus-within .boundary-tooltip{display:block}
