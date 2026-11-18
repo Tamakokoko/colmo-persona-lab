@@ -8,7 +8,8 @@
   const riskKeys=['lowRisk','mediumRisk','highRisk'];
   const risks=catalog.strategies.D.riskLevels;
   let activeRisk='lowRisk';
-  const defaults = {version:3,baseline:clone(catalog.baseline),strategies:Object.fromEntries(Object.entries(catalog.strategies).map(([key,s]) => [key, key === 'D' ? {low:[...s.low],high:[...s.high],...Object.fromEntries(riskKeys.map(k=>[k,[...risks[k].values]]))} : {values:[...s.values]}]))};
+  let expressionView='personality';
+  const defaults = {version:3,catalogRevision:"20261118-routine-boundaries",baseline:clone(catalog.baseline),strategies:Object.fromEntries(Object.entries(catalog.strategies).map(([key,s]) => [key, key === 'D' ? {low:[...s.low],high:[...s.high],...Object.fromEntries(riskKeys.map(k=>[k,[...risks[k].values]]))} : {values:[...s.values]}]))};
   const $ = id => document.getElementById(id);
   const STORAGE_KEY = 'colmo-persona-lab-v3';
   const LEGACY_STORAGE_KEY = 'colmo-persona-lab-v1';
@@ -17,7 +18,7 @@
   let storageAvailable = true;
   const strategyColors={A:'#2864dc',B:'#8050bd',C:'#148b8d',D:'#d68a19',E:'#cd507c',F:'#6475bc'};
   const visibleStrategies=new Set(Object.keys(catalog.strategies));
-  const colors = {appearance:'#3569db',communication:'#178b83',action:'#8360bd'};
+  const colors = {appearance:'#2864d7',communication:'#087f78',action:'#7952b5'};
   const clamp = (value,min,max) => Math.min(max,Math.max(min,value));
   const level = (i,v) => axes[i].prefix + v;
   const levelName = (i,v) => level(i,v) + ' ' + axes[i].ticks[v - axes[i].min];
@@ -28,12 +29,29 @@
   function toast(text) { clearTimeout(toastTimer);$('toast').textContent=text;$('toast').classList.add('show');toastTimer=setTimeout(()=>$('toast').classList.remove('show'),3200); }
   function validate(data) {
     if(!data || ![1,2,3].includes(data.version) || !data.baseline || !data.strategies) throw new Error('文件格式不匹配，请选择本网页导出的 JSON。');
+    // Upgrade old drafts to the report's routine boundary; preserve D risk settings.
+    const migrating = data.catalogRevision !== defaults.catalogRevision;
+    if (migrating) {
+      data = clone(data);
+      if (data.version === 1) {
+        for (const [key, strategy] of Object.entries(data.strategies)) {
+          if (key === 'D') [strategy.low[6], strategy.high[6]] = [5-strategy.high[6], 5-strategy.low[6]];
+          else strategy.values[6] = 5-strategy.values[6];
+        }
+        data.version = 2;
+      }
+      data.baseline = clone(defaults.baseline);
+      for (const [key, strategy] of Object.entries(data.strategies)) {
+        if (key !== 'D' && Array.isArray(strategy.values))
+          strategy.values = strategy.values.map((v,i) => clamp(v,data.baseline.low[i],data.baseline.high[i]));
+      }
+    }
     const check = values => {if(!Array.isArray(values)||values.length!==8||values.some((v,i)=>!Number.isInteger(v)||v<axes[i].min||v>axes[i].max))throw new Error('参数必须是八个有效的整数刻度。');};
     for(const field of ['center','low','high']) check(data.baseline[field]);
     for(let i=0;i<8;i++)if(data.baseline.low[i]>data.baseline.center[i]||data.baseline.center[i]>data.baseline.high[i])throw new Error('原型参照线必须位于允许范围内。');
     for(const key of Object.keys(catalog.strategies)) {
       const s=data.strategies[key];if(!s)throw new Error('参数缺少策略 '+key+'。');
-      for(const field of key==='D'?['low','high']:['values']){check(s[field]);if(s[field].some((v,i)=>v<data.baseline.low[i]||v>data.baseline.high[i]))throw new Error('策略 '+key+' 超出了原型允许范围。');}
+      for(const field of key==='D'?['low','high']:['values']){check(s[field]);if(key!=='D'&&s[field].some((v,i)=>v<data.baseline.low[i]||v>data.baseline.high[i]))throw new Error('策略 '+key+' 超出了常规允许范围。');}
       if(key==='D'&&s.low.some((v,i)=>v>s.high[i]))throw new Error('风险策略的下限不能高于上限。');
     }
     // v1 used L1 high → L4 low. Convert values and swap interval ends together.
@@ -50,9 +68,9 @@
       }
     }
     const riskState={low:[...data.strategies.D.low],high:[...data.strategies.D.high]};
-    for(const k of riskKeys){const values=data.version===3?data.strategies.D[k]:risks[k].values.map((v,i)=>clamp(v,riskState.low[i],riskState.high[i]));check(values);if(values.some((v,i)=>v<data.baseline.low[i]||v>data.baseline.high[i]))throw new Error('风险等级超出原型允许范围。');riskState[k]=[...values];}
+    for(const k of riskKeys){const values=data.version===3?data.strategies.D[k]:risks[k].values.map((v,i)=>clamp(v,riskState.low[i],riskState.high[i]));check(values);if(values.some((v,i)=>v<catalog.riskBoundary.low[i]||v>catalog.riskBoundary.high[i]))throw new Error('风险等级超出独立风险策略范围。');riskState[k]=[...values];}
     for(let i=0;i<8;i++){riskState.low[i]=Math.min(...riskKeys.map(k=>riskState[k][i]));riskState.high[i]=Math.max(...riskKeys.map(k=>riskState[k][i]));}
-    return {version:3,baseline:{center:[...data.baseline.center],low:[...data.baseline.low],high:[...data.baseline.high]},strategies:Object.fromEntries(Object.keys(catalog.strategies).map(key=>[key,key==='D'?riskState:{values:[...data.strategies[key].values]}]))};
+    return {version:3,catalogRevision:"20261118-routine-boundaries",baseline:{center:[...data.baseline.center],low:[...data.baseline.low],high:[...data.baseline.high]},strategies:Object.fromEntries(Object.keys(catalog.strategies).map(key=>[key,key==='D'?riskState:{values:[...data.strategies[key].values]}]))};
   }
   let loadMessage='';
   try {const cached=localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem('colmo-persona-lab-v2') ?? localStorage.getItem(LEGACY_STORAGE_KEY);if(cached){
@@ -60,7 +78,10 @@
     const oldDefault=clone(previousDefault);oldDefault.version=2;for(const k of riskKeys)delete oldDefault.strategies.D[k];
     const olderDefault=clone(oldDefault);olderDefault.baseline.high[1]=3;olderDefault.baseline.high[5]=4;olderDefault.strategies.D.high[1]=3;olderDefault.strategies.D.high[5]=4;
     const priorDefaults=[defaults,previousDefault,oldDefault,olderDefault].map(d=>{const prior=clone(d);prior.strategies.C.values[5]=3;return prior;});
-    state=[previousDefault,oldDefault,olderDefault,...priorDefaults].some(d=>JSON.stringify(parsed)===JSON.stringify(d))?clone(defaults):validate(parsed);
+    const oldWarmthDefaults=[defaults,previousDefault,oldDefault,olderDefault,...priorDefaults].map(d=>{const old=clone(d);delete old.catalogRevision;old.strategies.A.values[3]=2;return old;});
+    state=[previousDefault,oldDefault,olderDefault,...priorDefaults,...oldWarmthDefaults].some(d=>JSON.stringify(parsed)===JSON.stringify(d))?clone(defaults):validate(parsed);
+    if(parsed.catalogRevision!==defaults.catalogRevision)loadMessage='已按汇报修改同步常规边界；风险策略单独保留，不计入常规范围。';
+    if(!parsed.catalogRevision&&state.strategies.A.values[3]===2&&state.baseline.low[3]<=1){state.strategies.A.values[3]=1;loadMessage='A 类表达温度已更新为 L1 平实礼貌，其余草稿参数保留。';}
   }}catch(e){loadMessage='未能读取本机草稿，已载入默认值。';}
   function save() { clearTimeout(saveTimer);$('saveState').textContent='正在保存…';saveTimer=setTimeout(()=>{try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));$('saveState').textContent='已保存至本机';}catch(e){storageAvailable=false;$('saveState').textContent='请导出保存';$('storageNote').textContent='浏览器存储不可用，请导出参数';}},250); }
   function modified(key) {if(key==='overview')return false;return JSON.stringify(key==='prototype'?state.baseline:state.strategies[key])!==JSON.stringify(key==='prototype'?defaults.baseline:defaults.strategies[key]);}
@@ -91,7 +112,7 @@
       const toggle=document.createElement('input');toggle.type='checkbox';toggle.checked=true;toggle.dataset.strategy=key;toggle.setAttribute('aria-label',key+' '+strategy.title+' 显示开关');
       toggle.addEventListener('change',()=>setStrategyVisible(key,toggle.checked));
       const track=document.createElement('span');const status=document.createElement('b');status.className='visibility-text';status.textContent='显示';visibility.append(toggle,track,status);
-      row.append(code,button,visibility);const purpose=document.createElement('p');purpose.className='overview-purpose';purpose.textContent=strategy.purpose;const definition=document.createElement('p');definition.textContent='“'+strategy.spoken+'”';card.append(row,purpose,definition);$('overviewList').append(card);
+      row.append(code,button,visibility);const purpose=document.createElement('p');purpose.className='overview-purpose';purpose.textContent=strategy.personalityFocus;const definition=document.createElement('p');definition.textContent=strategy.focusRationale;card.append(row,purpose,definition);$('overviewList').append(card);
       const label=document.createElement('label');label.className='overview-toggle';label.style.setProperty('--strategy-color',strategyColors[key]);
       const input=document.createElement('input');input.type='checkbox';input.checked=true;input.dataset.strategy=key;input.setAttribute('aria-label','显示 '+key+' '+strategy.title);
       input.addEventListener('change',()=>setStrategyVisible(key,input.checked));
@@ -114,6 +135,7 @@
     });
     $('radarDescription').textContent=Object.keys(catalog.strategies).filter(k=>visibleStrategies.has(k)).map(k=>k+' '+catalog.strategies[k].title+'：'+axes.map((a,i)=>{const s=state.strategies[k];return a.name+' '+(k==='D'?level(i,s.low[i])+'–'+level(i,s.high[i]):level(i,s.values[i]));}).join('；')).join('。');
   }
+  function editingBounds(i) { return active==='D' ? [catalog.riskBoundary.low[i],catalog.riskBoundary.high[i]] : [state.baseline.low[i],state.baseline.high[i]]; }
   function selectedBounds(i) {if(active==='prototype')return [state.baseline.center[i],state.baseline.center[i]];if(active==='D')return[state.strategies.D[activeRisk][i],state.strategies.D[activeRisk][i]];return[state.strategies[active].values[i],state.strategies[active].values[i]];}
   function rangeInput(i,field,label) {
     const input=document.createElement('input');input.type='range';input.className='axis-input';input.min=axes[i].min;input.max=axes[i].max;input.step=1;input.dataset.field=field;
@@ -177,7 +199,7 @@
     const entry=makeScaleEntry(i,value);
     popover.replaceChildren(head,entry);
     if(value<state.baseline.low[i]||value>state.baseline.high[i]){
-      const note=document.createElement('p');note.className='popover-limit';note.textContent='超出原型允许范围';popover.append(note);
+      const note=document.createElement('p');note.className='popover-limit';note.textContent=active==='D'?'风险策略例外：不计入常规人格边界':'超出常规允许范围';popover.append(note);
     }
     positionScale();
   }
@@ -208,7 +230,7 @@
     axes.forEach((axis,i)=>{
       const row=document.createElement('div');row.className='axis-row '+axis.group;row.id='axis-'+i;
       const heading=document.createElement('div');heading.className='axis-heading';heading.innerHTML='<div class="axis-title"><span class="axis-number">'+String(i+1).padStart(2,'0')+'</span><h3>'+axis.name+'</h3><button class="info-button" aria-label="查看'+axis.name+'定义" aria-expanded="false" aria-controls="axis-detail-'+i+'">?</button></div><output class="axis-value"></output>';row.append(heading);
-      const detail=document.createElement('div');detail.id='axis-detail-'+i;detail.className='axis-detail';detail.hidden=true;const definition=document.createElement('p');definition.textContent=axis.definition;const basis=document.createElement('p');basis.textContent=axis.basis;detail.append(definition,basis);row.append(detail);heading.querySelector('button').addEventListener('click',e=>{detail.hidden=!detail.hidden;e.currentTarget.setAttribute('aria-expanded',String(!detail.hidden));});
+      const detail=document.createElement('div');detail.id='axis-detail-'+i;detail.className='axis-detail';detail.hidden=true;const definition=document.createElement('p');definition.textContent=axis.definition;const basis=document.createElement('p');basis.textContent=axis.basis;detail.append(definition,basis);if(axis.rangeGuide)appendRangeGuide(detail,axis.rangeGuide);row.append(detail);heading.querySelector('button').addEventListener('click',e=>{detail.hidden=!detail.hidden;e.currentTarget.setAttribute('aria-expanded',String(!detail.hidden));});
       createTrack(row,i,active==='prototype'?'center':active==='D'?activeRisk:'values','刻度');
       const ticks=document.createElement('div');ticks.className='tick-labels';
       axis.ticks.forEach((name,j)=>{
@@ -216,7 +238,7 @@
         b.setAttribute('aria-label',axis.name+'：设为 '+levelName(i,value));b.dataset.value=value;
         bindScaleHover(b,i,()=>value);
         b.addEventListener('click',()=>{
-          if(value>=state.baseline.low[i]&&value<=state.baseline.high[i]){
+          if(value>=editingBounds(i)[0]&&value<=editingBounds(i)[1]){
             let field=active==='prototype'?'center':'values';
             if(active==='D')field=activeRisk;
             edit(i,field,value);
@@ -224,26 +246,26 @@
           showScale(i,value,b);
         });ticks.append(b);
       });row.append(ticks);
-      if(active==='prototype'){const controls=document.createElement('div');controls.className='range-controls';for(const field of ['low','high']){const label=document.createElement('label');label.textContent=field==='low'?'允许下限':'允许上限';const select=document.createElement('select');select.className='level-select';select.dataset.field=field;select.setAttribute('aria-label',axis.name+' '+label.textContent);axis.ticks.forEach((name,j)=>{const op=document.createElement('option');op.value=axis.min+j;op.textContent=levelName(i,axis.min+j);select.append(op);});select.addEventListener('change',()=>edit(i,field,Number(select.value)));label.append(select);controls.append(label);}const help=document.createElement('span');help.className='range-instruction';help.textContent='六类策略在此范围内调整';controls.append(help);row.append(controls);}
+      if(active==='prototype'){const controls=document.createElement('div');controls.className='range-controls';for(const field of ['low','high']){const label=document.createElement('label');label.textContent=field==='low'?'允许下限':'允许上限';const select=document.createElement('select');select.className='level-select';select.dataset.field=field;select.setAttribute('aria-label',axis.name+' '+label.textContent);axis.ticks.forEach((name,j)=>{const op=document.createElement('option');op.value=axis.min+j;op.textContent=levelName(i,axis.min+j);select.append(op);});select.addEventListener('change',()=>edit(i,field,Number(select.value)));label.append(select);controls.append(label);}const help=document.createElement('span');help.className='range-instruction';help.textContent='常规策略在范围内调整；D 类风险策略单列';controls.append(help);row.append(controls);}
       if(active!=='prototype'){const note=document.createElement('p');note.textContent=catalog.strategies[active].notes[i];detail.append(note);}
       $('axesEditor').append(row);
     });
     refreshRows();
   }
   function refreshRows() {
-    axes.forEach((axis,i)=>{const row=$('axis-'+i);const[low,high]=selectedBounds(i);row.querySelector('output').textContent=low===high?levelName(i,low):level(i,low)+'–'+level(i,high)+' · '+axis.ticks[low-axis.min]+' → '+axis.ticks[high-axis.min];row.querySelectorAll('.axis-input').forEach(input=>{let value=active==='prototype'?state.baseline.center[i]:active==='D'?state.strategies.D[input.dataset.field][i]:low;input.value=value;input.setAttribute('aria-valuetext',levelName(i,value));});row.querySelectorAll('.allowed-segment').forEach(el=>{el.style.left=pct(i,state.baseline.low[i])+'%';el.style.width=(pct(i,state.baseline.high[i])-pct(i,state.baseline.low[i]))+'%';});row.querySelectorAll('.strategy-segment').forEach(el=>{el.style.left=pct(i,low)+'%';el.style.width=(pct(i,high)-pct(i,low))+'%';});row.querySelectorAll('.baseline-marker').forEach(el=>el.style.left=pct(i,state.baseline.center[i])+'%');row.querySelectorAll('.track-tick-dot').forEach(dot=>{const value=Number(dot.dataset.value);dot.classList.toggle('outside-range',value<state.baseline.low[i]||value>state.baseline.high[i]);});row.querySelectorAll('.tick-label').forEach(b=>{const v=Number(b.dataset.value);b.classList.toggle('selected',v>=low&&v<=high);b.classList.toggle('outside-range',v<state.baseline.low[i]||v>state.baseline.high[i]);});row.querySelectorAll('select').forEach(s=>{s.value=state.baseline[s.dataset.field][i];Array.from(s.options).forEach(op=>op.disabled=s.dataset.field==='low'?Number(op.value)>state.baseline.high[i]:Number(op.value)<state.baseline.low[i]);});});
+    axes.forEach((axis,i)=>{const row=$('axis-'+i);const[low,high]=selectedBounds(i);row.querySelector('output').textContent=low===high?levelName(i,low):level(i,low)+'–'+level(i,high)+' · '+axis.ticks[low-axis.min]+' → '+axis.ticks[high-axis.min];row.querySelectorAll('.axis-input').forEach(input=>{let value=active==='prototype'?state.baseline.center[i]:active==='D'?state.strategies.D[input.dataset.field][i]:low;input.value=value;input.setAttribute('aria-valuetext',levelName(i,value));});row.querySelectorAll('.allowed-segment').forEach(el=>{el.style.left=pct(i,state.baseline.low[i])+'%';el.style.width=(pct(i,state.baseline.high[i])-pct(i,state.baseline.low[i]))+'%';});row.querySelectorAll('.strategy-segment').forEach(el=>{el.style.left=pct(i,low)+'%';el.style.width=(pct(i,high)-pct(i,low))+'%';});row.querySelectorAll('.baseline-marker').forEach(el=>el.style.left=pct(i,state.baseline.center[i])+'%');row.querySelectorAll('.track-tick-dot').forEach(dot=>{const value=Number(dot.dataset.value);dot.classList.toggle('outside-range',value<editingBounds(i)[0]||value>editingBounds(i)[1]);});row.querySelectorAll('.tick-label').forEach(b=>{const v=Number(b.dataset.value);b.classList.toggle('selected',v>=low&&v<=high);b.classList.toggle('outside-range',v<editingBounds(i)[0]||v>editingBounds(i)[1]);});row.querySelectorAll('select').forEach(s=>{s.value=state.baseline[s.dataset.field][i];Array.from(s.options).forEach(op=>op.disabled=s.dataset.field==='low'?Number(op.value)>state.baseline.high[i]:Number(op.value)<state.baseline.low[i]);});});
     let changed=0;axes.forEach((_,i)=>{const[l,h]=selectedBounds(i);if(l!==state.baseline.center[i]||h!==state.baseline.center[i])changed++;});$('changeCount').textContent=active==='prototype'?'原型参照线 / 允许范围':('与原型差异：'+changed+' 维');$('radarDescription').textContent=axes.map((axis,i)=>{const[l,h]=selectedBounds(i);return axis.name+' '+levelName(i,l)+(l!==h?' 至 '+levelName(i,h):'');}).join('；');updateTabs();
   }
-  function constrainStrategies() {let count=0;for(const strategy of Object.values(state.strategies))for(const values of Object.values(strategy))values.forEach((v,i)=>{const next=clamp(v,state.baseline.low[i],state.baseline.high[i]);if(v!==next)count++;values[i]=next;});syncRiskBounds();return count;}
+  function constrainStrategies() {let count=0;for(const [key,strategy] of Object.entries(state.strategies))if(key!=='D')for(const values of Object.values(strategy))values.forEach((v,i)=>{const next=clamp(v,state.baseline.low[i],state.baseline.high[i]);if(v!==next)count++;values[i]=next;});syncRiskBounds();return count;}
   function syncRiskBounds(){const s=state.strategies.D;axes.forEach((_,i)=>{s.low[i]=Math.min(...riskKeys.map(k=>s[k][i]));s.high[i]=Math.max(...riskKeys.map(k=>s[k][i]));});}
   function edit(i,field,value) {
     if(active==='prototype'){
       const b=state.baseline;if(field==='low')value=Math.min(value,b.high[i]);if(field==='high')value=Math.max(value,b.low[i]);if(field==='center')value=clamp(value,b.low[i],b.high[i]);b[field][i]=value;b.center[i]=clamp(b.center[i],b.low[i],b.high[i]);const count=constrainStrategies();if(count)toast('原型范围已收窄，'+count+' 个策略端点已同步收敛。');
-    }else{value=clamp(value,state.baseline.low[i],state.baseline.high[i]);const s=state.strategies[active];s[field][i]=value;if(active==='D')syncRiskBounds();}
+    }else{value=clamp(value,...editingBounds(i));const s=state.strategies[active];s[field][i]=value;if(active==='D')syncRiskBounds();}
     refreshRows();transition(110);save();
   }
   const cx=320,cy=285,R=210;
-  function point(i,v) {const angle=-Math.PI/2+i*Math.PI/4,r=R*(.13+.87*normalize(i,v));return[cx+Math.cos(angle)*r,cy+Math.sin(angle)*r];}
+  function point(i,v) {const angle=-Math.PI/2+i*Math.PI/4,r=R*(.18+.82*normalize(i,v));return[cx+Math.cos(angle)*r,cy+Math.sin(angle)*r];}
   const path = points => points.map((p,i)=>(i?'L':'M')+p.map(n=>n.toFixed(3)).join(' ')).join(' ')+' Z';
   const shape = values => path(values.map((v,i)=>point(i,v)));
   function bandPath(low,high){return shape(high)+' '+path(low.map((v,i)=>point(i,v)).reverse());}
@@ -252,7 +274,7 @@
     for(let ring=0;ring<=4;ring++){const fraction=ring/4;svgNode('path',{d:shape(axes.map(a=>a.min+fraction*(a.max-a.min))),class:'grid-path'},grid);}
     axes.forEach((axis,i)=>{const p=point(i,axis.max);svgNode('path',{d:'M'+cx+' '+cy+' L'+p.join(' '),class:'spoke'},grid);for(let value=axis.min;value<=axis.max;value++){const q=point(i,value);const an=-Math.PI/2+i*Math.PI/4,dx=-Math.sin(an)*3,dy=Math.cos(an)*3;svgNode('path',{d:'M'+(q[0]-dx)+' '+(q[1]-dy)+' L'+(q[0]+dx)+' '+(q[1]+dy),stroke:'#bfcde2','stroke-width':1},grid);}});
     const locations=[[320,48,'middle'],[493,113,'middle'],[552,281,'start'],[493,472,'middle'],[320,536,'middle'],[146,472,'middle'],[89,278,'end'],[146,113,'middle']];
-    axes.forEach((axis,i)=>{const[x,y,anchor]=locations[i],g=svgNode('g',{},$('labelLayer'));const t=svgNode('text',{x,y,'text-anchor':anchor,fill:colors[axis.group],class:'axis-label'},g);if(i===6){t.textContent='主动';const t2=svgNode('tspan',{x,dy:18},t);t2.textContent='介入阈值';}else if(i===2){t.textContent='感知能力';const t2=svgNode('tspan',{x,dy:18},t);t2.textContent='/ 专业感';}else t.textContent=axis.name;const tick=svgNode('text',{x,y:y+(i===2||i===6?37:21),'text-anchor':anchor,class:'axis-tick'},g);tick.textContent=axis.prefix+axis.min+' → '+axis.prefix+axis.max;t.addEventListener('click',()=>{if(active==='overview')return;const row=$('axis-'+i);row.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'center'});row.classList.add('flash');setTimeout(()=>row.classList.remove('flash'),1100);});});
+    axes.forEach((axis,i)=>{const[x,y,anchor]=locations[i],g=svgNode('g',{},$('labelLayer'));const t=svgNode('text',{x,y,'text-anchor':anchor,fill:colors[axis.group],class:'axis-label'},g);if(i===6){t.textContent='主动';const t2=svgNode('tspan',{x,dy:18},t);t2.textContent='介入阈值';}else if(i===2){t.textContent='感知能力';const t2=svgNode('tspan',{x,dy:18},t);t2.textContent='/ 专业感';}else t.textContent=axis.name;const tick=svgNode('text',{x,y:y+(i===2||i===6?37:21),'text-anchor':anchor,class:'axis-tick'},g);tick.textContent=axis.prefix+axis.min+' → '+axis.prefix+axis.max;t.addEventListener('click',()=>{if(active==='overview')return;setExpressionView('personality');const row=$('axis-'+i);row.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'center'});row.classList.add('flash');setTimeout(()=>row.classList.remove('flash'),1100);});});
   }
   function buildRadarHover() {
     const layer=svgNode('g',{id:'radarTickTargets'},$('radar'));
@@ -290,7 +312,7 @@
     if(!ids.includes(key))return;hideScale();active=key;updateTabs();
     const overview=key==='overview';
     $('overviewPanel').hidden=!overview;$('overviewLegend').hidden=!overview;$('editorPanel').hidden=overview;$('detailLegend').hidden=overview;$('strategyContext').hidden=overview;
-    $('chartHeading').textContent=overview?'六类策略总览':'八维表达轮廓';
+    $('chartHeading').textContent=overview?'六类策略总览':'八维人格定位';
     document.querySelector('.workspace').classList.toggle('is-overview',overview);
     document.documentElement.style.setProperty('--strategy-color',strategyColors[key]||'#245de7');
     $('riskTabs').hidden=key!=='D';
@@ -299,20 +321,49 @@
     renderDesignPrinciples(key);
     const proto=key==='prototype',risk=key==='D';$('activeLegend').textContent=proto?'原型参照线':key+' · '+catalog.strategies[key].short;$('baseLegend').hidden=proto||!$('compareToggle').checked;$('bandLegend').hidden=true;$('compareToggle').disabled=proto;$('editorTitle').textContent=proto?'人格原型':key+' · '+catalog.strategies[key].title;
     $('contextLetter').textContent=proto?'◎':key;
-    $('contextTitle').textContent=proto?'理性、专业、克制的高端管家':catalog.strategies[key].title;
+    $('contextTitle').textContent=proto?window.COLMO_PERSONA.title:catalog.strategies[key].title;
+    if(proto)$('prototypeIntroduction').textContent=window.COLMO_PERSONA.description;
     $('prototypeIntroduction').hidden=!proto;
     $('contextPurpose').hidden=proto;
-    $('contextPurpose').textContent=proto?'':'定义｜'+catalog.strategies[key].definition;
+    $('contextPurpose').textContent=proto?'':catalog.strategies[key].purpose;
+    renderOriginalDefinition(key);
     $('radarTitle').textContent=(proto?'COLMO 人格原型':key+' '+catalog.strategies[key].title)+'八维雷达图';
     $('radarDescription').textContent=axes.map((axis,i)=>{const[l,h]=selectedBounds(i);return axis.name+' '+levelName(i,l)+(l!==h?' 至 '+levelName(i,h):'');}).join('；');
     if(risk)renderRiskContext();
-    renderEditor();transition();
+    renderEditor();renderExpressionPrinciples(key);updateExpressionView();transition();
     if (!scaleHelpSeen) openScaleHelp();
+  }
+  function renderOriginalDefinition(key){
+    const host=$('originalDefinition');host.replaceChildren();
+    const strategy=catalog.strategies[key];host.hidden=!strategy;
+    if(!strategy)return;
+    const line=document.createElement('p');
+    const label=document.createElement('strong');label.textContent='口语化定义  ';
+    line.append(label,document.createTextNode(strategy.definition));host.append(line);
+    const details=document.createElement('details');
+    const summary=document.createElement('summary');summary.textContent='案例与边界';details.append(summary);
+    for(const [label,text] of [['案例',strategy.example],['边界',strategy.boundary]]){
+      const p=document.createElement('p'),b=document.createElement('strong');b.textContent=label+'  ';
+      p.append(b,document.createTextNode(text));details.append(p);
+    }
+    host.append(details);
   }
   function renderDesignPrinciples(key){
     const list=$('contextDimensionChange');list.replaceChildren();
-    $('strategyExample').textContent=catalog.strategies[key]?.example||'';
-    const rows=catalog.strategies[key]?.designPrinciples||[];
+    const exampleHost=$('strategyExample');exampleHost.replaceChildren();
+    const example=window.COLMO_PRINCIPLES[key]?.example;
+    if(example){
+      const context=document.createElement('p');context.className='example-context';context.textContent='情境｜'+example.context;
+      exampleHost.append(context,makeExampleResponse(example.do));
+    }
+    const strategy=catalog.strategies[key];
+    if(strategy?.personalityFocus){
+      const row=document.createElement('div');row.className='design-principle personality-focus';
+      const title=document.createElement('dt');title.textContent='人格侧重';
+      const text=document.createElement('dd');text.textContent=strategy.personalityFocus;
+      row.append(title,text);list.append(row);
+    }
+    const rows=strategy?.designPrinciples||[];
     for(const [name,principle] of rows){
       const row=document.createElement('div');row.className='design-principle';
       const title=document.createElement('dt');title.textContent=name;
@@ -321,12 +372,116 @@
     }
     $('contextRisk').hidden=key!=='D';
   }
+  function updateExpressionView(){
+    const available=active==='prototype'||Boolean(window.COLMO_PRINCIPLES[active]);
+    $('principlesTab').textContent=active==='prototype'?'人格特质与八维原则':'表达设计原则';
+    const showingPrinciples=available&&expressionView==='principles';
+    $('expressionViewTabs').hidden=!available;
+    $('personalityPanel').hidden=showingPrinciples;
+    $('principlesPanel').hidden=!showingPrinciples;
+    $('resetButton').hidden=showingPrinciples;
+    $('expressionViewTabs').querySelectorAll('[role="tab"]').forEach(button=>{
+      const selected=button.dataset.view===(showingPrinciples?'principles':'personality');
+      button.setAttribute('aria-selected',String(selected));button.tabIndex=selected?0:-1;
+    });
+  }
+  function setExpressionView(view){
+    hideScale();expressionView=view;updateExpressionView();
+  }
+  $('expressionViewTabs').querySelectorAll('[role="tab"]').forEach((button,i,buttons)=>{
+    button.addEventListener('click',()=>setExpressionView(button.dataset.view));
+    button.addEventListener('keydown',event=>{
+      if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+      event.preventDefault();
+      const next=event.key==='Home'?0:event.key==='End'?buttons.length-1:(i+1)%buttons.length;
+      buttons[next].click();buttons[next].focus();
+    });
+  });
+  function renderExpressionPrinciples(key){
+    const panel=$('principlesPanel');panel.replaceChildren();
+    if(key==='prototype'){renderGeneralPrinciples(panel);return;}
+    const content=window.COLMO_PRINCIPLES[key];if(!content)return;
+    const element=(tag,className,text)=>{const node=document.createElement(tag);node.className=className;if(text)node.textContent=text;return node;};
+    content.sections.forEach((section,index)=>{
+      const block=element('section','principles-section');
+      const heading=element('h3','principles-heading');
+      heading.append(element('span','principles-number',String(index+1).padStart(2,'0')),document.createTextNode(section.title));
+      block.append(heading,element('p','principles-summary',section.summary));
+      const scales=element('div','principles-scales');scales.setAttribute('aria-label','默认人格定位参照');
+      section.scales.forEach(scale=>scales.append(element('span','',scale)));block.append(scales);
+      const list=element('dl','principles-items');
+      section.items.forEach(item=>{
+        const row=element('div','principles-item');const description=element('dd','',item.text);
+        if(item.states){
+          const states=element('dl','principles-states');
+          item.states.forEach(state=>{const cell=element('div','');cell.append(element('dt','',state.label),element('dd','',state.text));states.append(cell);});
+          description.append(states);
+        }
+        row.append(element('dt','',item.label),description);list.append(row);
+      });
+      block.append(list);panel.append(block);
+    });
+    const example=element('section','principles-example');
+    example.append(element('h3','principles-heading','情境案例'),element('p','principles-context',content.example.context));
+    const pair=element('div','principles-comparison');
+    for(const [kind,title] of [['do','✓ Do'],['dont','× Don’t']]){
+      const card=element('div','principles-example-card '+kind);
+      card.append(element('h4','',title),makeExampleResponse(content.example[kind]));
+      pair.append(card);
+    }
+    example.append(pair);panel.append(example);
+  }
+  function appendRangeGuide(host,guide){
+    const section=document.createElement('section');section.className='axis-range-guide';
+    const title=document.createElement('h4');title.textContent='白皮书原型范围 · '+guide.range;section.append(title);
+    const addBlock=(block)=>{const article=document.createElement('div');article.className='axis-guide-block';const h=document.createElement('h5');h.textContent=block.title;article.append(h);for(const text of block.paragraphs){const p=document.createElement('p');p.textContent=text;article.append(p);}section.append(article);};
+    guide.blocks.forEach(addBlock);
+    const h=document.createElement('h4');h.textContent='区间内随情境调整表达';section.append(h);guide.adjustments.forEach(addBlock);
+    const sources=document.createElement('details');sources.className='axis-guide-sources';const summary=document.createElement('summary');summary.textContent='本轴依据';sources.append(summary);
+    for(const ref of guide.references){const p=document.createElement('p');p.textContent=ref;sources.append(p);}section.append(sources);
+    const link=document.createElement('a');link.href='https://www.figma.com/design/H3Ve4kkJF3QuIETEv5bLzy?node-id='+guide.sourcePageId.replace(':','-');link.target='_blank';link.rel='noopener noreferrer';link.textContent='查看 Figma 原页 ↗';section.append(link);host.append(section);
+  }
+  function renderGeneralPrinciples(panel){
+    const persona=window.COLMO_PERSONA;
+    const intro=document.createElement('p');intro.className='persona-intro';intro.textContent=persona.intro;panel.append(intro);
+    const legend=document.createElement('div');legend.className='persona-legend';legend.setAttribute('aria-label','颜色编码');
+    for(const [group,title] of [['appearance','形象表达'],['communication','沟通表达'],['action','行动方式']]){
+      const item=document.createElement('span');item.className=group;item.textContent='■ '+title;legend.append(item);
+    }
+    // The three-channel legend belongs to the eight-dimensional principles below.
+    for(const trait of persona.traits){
+      const section=document.createElement('section');section.className='persona-trait';
+      const heading=document.createElement('h3');heading.textContent=trait.title;
+      const body=document.createElement('p');
+      for(const segment of trait.segments){const span=document.createElement('span');span.textContent=segment.text;const c=segment.color;if(c)span.style.color=`rgb(${Math.round(c.r*255)},${Math.round(c.g*255)},${Math.round(c.b*255)})`;body.append(span);}
+      section.append(heading,body);panel.append(section);
+    }
+    const heading=document.createElement('h3');heading.className='persona-principles-title';heading.textContent='八维表达原则';
+    const bridge=document.createElement('p');bridge.className='persona-intro';bridge.textContent=persona.principlesIntro;
+    panel.append(heading,bridge,legend);
+    window.COLMO_GENERAL_PRINCIPLES.forEach((principle,index)=>{
+      const section=document.createElement('section');section.className='principles-section general-principle '+principle.group;
+      const heading=document.createElement('h3');heading.className='principles-heading';
+      const number=document.createElement('span');number.className='principles-number';number.textContent=String(index+1).padStart(2,'0');
+      heading.append(number,document.createTextNode(principle.title));
+      const axis=document.createElement('p');axis.className='principles-summary';axis.textContent=principle.axis;
+      const text=document.createElement('p');text.className='general-principle-text';text.textContent=principle.text;
+      section.append(heading,axis,text);panel.append(section);
+    });
+  }
+  function makeExampleResponse(response){
+    const block=document.createElement('div');block.className='example-response';
+    response.split('\n').forEach(text=>{
+      const paragraph=document.createElement('p');paragraph.textContent=text;block.append(paragraph);
+    });
+    return block;
+  }
   function renderRiskContext(){
     const r=risks[activeRisk];
     document.documentElement.style.setProperty('--strategy-color',r.color);
     $('riskTabs').querySelectorAll('button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.risk===activeRisk)));
-    $('contextPurpose').textContent='定义｜'+catalog.strategies.D.definition;
-    $('contextRisk').textContent=r.title+'｜'+r.definition;
+    $('contextPurpose').textContent=catalog.strategies.D.purpose;
+    $('contextRisk').textContent=r.title+'｜'+r.definition+' 本策略单独展示，不计入常规人格表达边界。';
     $('activeLegend').textContent=r.title;
     $('editorTitle').textContent=r.title+' · 八维表达';
     $('radarTitle').textContent=r.title+'八维表达雷达图';

@@ -292,14 +292,13 @@ main{width:100%;max-width:none;min-width:0;padding:16px 20px 0;margin:0}
 .context-rationale{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(260px,1fr);gap:24px;padding-top:0;border-top:0}
 .strategy-example{align-self:start;padding:8px 0 8px 20px;border-left:1px solid var(--line)}
 .strategy-example h3{margin:0 0 7px;font-size:12px;font-weight:600;color:var(--strategy-color)}
-.strategy-example blockquote{margin:0;font-size:13px;line-height:1.75;color:#263d59}
-.strategy-example blockquote::before{content:'“'}
-.strategy-example blockquote::after{content:'”'}
 @media(max-width:850px){.context-rationale{grid-template-columns:1fr;gap:12px}.strategy-example{border-left:0;border-top:1px solid var(--line);padding:12px 0 0}}
 .design-principles{margin:0}
 .design-principle{display:grid;grid-template-columns:78px minmax(0,1fr);gap:16px;padding:8px 0;border-top:1px solid var(--line);font-size:12px;line-height:1.65}
 .design-principle dt{font-weight:600;color:var(--strategy-color)}
 .design-principle dd{margin:0;color:#42566f}
+.design-principle.personality-focus{border-top:0;padding-top:0}
+.design-principle.personality-focus dd{color:var(--strategy-color);font-weight:600}
 .context-risk{grid-column:1/-1;margin:0;font-size:11px;line-height:1.6;color:#6b7890}
 @media(min-width:1100px) and (max-height:850px){.design-principle{padding:5px 0;font-size:11px}}
 @media(max-width:600px){.design-principle{grid-template-columns:64px minmax(0,1fr);gap:10px}}
@@ -310,6 +309,36 @@ main{width:100%;max-width:none;min-width:0;padding:16px 20px 0;margin:0}
 .scale-help-dialog h2{font-size:19px;margin:0;line-height:1.5}
 .scale-help-dialog .dialog-head{gap:16px}
 .scale-help-actions{display:flex;justify-content:flex-end;margin-top:24px}
+
+/* Switch between adjustable personality axes and the six strategies' design principles. */
+.expression-view-tabs{display:flex;gap:24px;margin:0 26px 20px;border-bottom:1px solid var(--line)}
+.expression-view-tabs button{position:relative;padding:12px 0;font-size:13px;font-weight:600;color:#77869b;line-height:1.5}
+.expression-view-tabs button[aria-selected=true]{color:var(--strategy-color)}
+.expression-view-tabs button[aria-selected=true]:after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--strategy-color)}
+.principles-panel{padding:0 26px 26px}
+.principles-section{padding:22px 0;border-bottom:1px solid var(--line)}
+.principles-section:first-child{padding-top:0}
+.principles-heading{display:flex;align-items:baseline;gap:10px;font-size:16px;line-height:1.5;margin:0;font-weight:600;color:var(--navy)}
+.principles-number{font-size:11px;font-variant-numeric:tabular-nums;color:var(--strategy-color)}
+.principles-summary{font-size:12px;color:#71819a;line-height:1.6;margin:5px 0 10px}
+.principles-scales{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:10px;color:#77869b;line-height:1.6;margin-bottom:14px}
+.principles-items{margin:0;display:grid;gap:13px}
+.principles-item{display:grid;grid-template-columns:72px minmax(0,1fr);gap:14px;font-size:13px;line-height:1.8}
+.principles-item>dt{font-weight:600;color:var(--strategy-color)}
+.principles-item>dd{margin:0;color:#42566f;overflow-wrap:anywhere}
+.principles-states{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 18px;margin:12px 0 0;padding:12px 0 0;border-top:1px solid var(--line)}
+.principles-states dt{font-size:12px;font-weight:600;color:#42566f}
+.principles-states dd{margin:1px 0 0;font-size:11px;color:#77869b}
+.principles-example{padding-top:24px}
+.principles-context{font-size:13px;line-height:1.8;color:#42566f;margin:8px 0 16px}
+.principles-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.principles-example-card{padding:16px;background:#f8fafb;border:1px solid var(--line);border-radius:8px;min-width:0}
+.principles-example-card h4{font-size:12px;margin:0 0 14px;color:#20845a}
+.principles-example-card.dont h4{color:#ba5367}
+.principles-response-label{margin:0 0 6px;font-size:11px;font-weight:600;color:#71819a}
+.principles-example-card blockquote{font-size:13px;line-height:1.85;padding:0;margin:0;border:0;background:none;border-radius:0;color:#314761}
+.principles-example-note{margin:12px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:12px;color:#71819a;line-height:1.7;white-space:pre-line}
+@media(max-width:600px){.expression-view-tabs{margin-left:18px;margin-right:18px;gap:20px}.principles-panel{padding:0 18px 22px}.principles-comparison{grid-template-columns:1fr}.principles-item{grid-template-columns:64px minmax(0,1fr);gap:12px}}
 
 .hover-demo{display:block;width:100%;height:auto;margin-top:16px;font-size:12px}
 .hover-demo text{font-family:inherit;font-size:12px}
@@ -327,3 +356,38 @@ main{width:100%;max-width:none;min-width:0;padding:16px 20px 0;margin:0}
  .scale-help-dialog[open] .hover-demo-card{animation:none;opacity:1;transform:none}
  .scale-help-dialog[open] .hover-demo-focus{animation:none;opacity:1}
 }
+
+.example-context{margin:0 0 12px;font-size:12px;line-height:1.75;color:#71819a}
+.example-response{font-size:13px;line-height:1.8;color:#314761}
+.example-response>p{margin:0 0 8px}
+.example-response>p:last-child{margin-bottom:0}
+.example-response>.principles-response-label{margin-bottom:6px;font-size:11px;font-weight:600;color:#71819a}
+
+.general-principle-text{margin:0;font-size:13px;line-height:1.85;color:#42566f}
+
+/* Current Figma personality hierarchy and axis guidance. */
+:root{--appearance:#2864d7;--communication:#087f78;--action:#7952b5}
+.persona-intro{font-size:13px;line-height:1.85;color:#667487;margin:0 0 20px}
+.persona-legend{display:flex;flex-wrap:wrap;gap:18px;margin:0 0 24px;font-size:11px}
+.persona-legend .appearance,.general-principle.appearance .principles-summary{color:var(--appearance)}
+.persona-legend .communication,.general-principle.communication .principles-summary{color:var(--communication)}
+.persona-legend .action,.general-principle.action .principles-summary{color:var(--action)}
+.persona-trait{display:grid;grid-template-columns:76px minmax(0,1fr);gap:24px;margin:0 0 28px}
+.persona-trait h3{font-size:20px;line-height:1.5;margin:0;font-weight:600}
+.persona-trait p{font-size:13px;line-height:1.9;margin:0;white-space:pre-line}
+.persona-principles-title{margin:34px 0 12px;padding-top:26px;border-top:1px solid var(--line);font-size:20px}
+.overview-card .overview-purpose{font-size:15px;font-weight:600;color:#233348;margin-top:12px}
+.scale-example{white-space:pre-line}
+.axis-range-guide{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.axis-range-guide h4{font-size:13px;line-height:1.7;margin:16px 0 10px}
+.axis-guide-block{margin:14px 0}
+.axis-guide-block h5{font-size:12px;color:var(--axis-color);margin:0 0 5px}
+.axis-guide-block p{white-space:pre-line;line-height:1.8!important;margin:4px 0!important}
+.axis-guide-sources{margin:16px 0;font-size:11px;line-height:1.8;overflow-wrap:anywhere}
+.axis-guide-sources p{font-size:11px}
+@media(max-width:600px){.persona-trait{grid-template-columns:1fr;gap:8px}.persona-trait h3{font-size:18px}}
+
+.original-definition{grid-column:1/-1;font-size:13px;line-height:1.65;color:#273a50}.original-definition p{margin:0 0 6px}.original-definition summary{cursor:pointer;color:#55667b}.original-definition details[open]{padding-bottom:8px}.original-definition details p{margin-top:8px;max-width:1000px}
+
+/* Routine boundary scope, aligned with the November report. */
+.boundary-scope{margin:12px 20px 0;font-size:12px;line-height:1.6;color:#66758c;}

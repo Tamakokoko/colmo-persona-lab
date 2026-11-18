@@ -1,15 +1,24 @@
 {
-  "release": "20261028-unified-definitions",
+  "release": "20261118-routine-boundaries",
+  "figmaSection": "3665:7492",
+  "boundarySource": {
+    "fileKey": "H3Ve4kkJF3QuIETEv5bLzy",
+    "page": "11月工作",
+    "section": "汇报修改",
+    "nodeId": "3665:6673",
+    "revision": "20261118-routine-boundaries"
+  },
   "files": {
-    "index.html": "3de1a727d99881927b70fcd0dd402cbb0332cf67e424bb8ae49e40ece7eb0560",
-    "app.js": "44789fd1a96fcab920fff6dc74b246a958db0201e14d1a14e1227454cdf02339",
-    "data.js": "41e1d913210f12bda5acc5bbbf65f3db953d1d05657e3b7f39a113725d9bd4bb",
-    "scales.js": "bd04d5c07d0184300eaac74f18b84230ec446246423d7c8ebd1fe693cadcdcf2",
-    "cases.js": "2227901abb0189c0c168807f1581481ab2edfefae4d8a1997b74592c2e93483f",
+    "index.html": "bdd32848a35a5a70f2f29ec8184c03fd7e5e8358302915f45664b2d0a1f7d3bf",
+    "app.js": "8615faed0c9591f0c0f25ec06f6107b2de6c025bc93f23be45cd79671ec27c6b",
+    "data.js": "d0330a4b7ff4091138efa46fb65159cb5ce74dc308fe1a94f86935ad430934cd",
+    "scales.js": "bcf98b9191185660112ddd915d27bcf6b48f852f6a94684ee00539ae9869090e",
+    "principles.js": "2ca166eaed7e23e4c91aaea355b2cec1f7380521a424784c86ea4e9345e5bf54",
+    "cases.js": "acf61d299a007ef92de130266ca288e584e384810c398d0a1dd6aea7c929d4e7",
     "case-ui.js": "b67f5bd82bf5b03411f4b5541ffae38a73ce818dfd4996312927675c68400c4a",
     "case-assets.js": "c24ef1bfa9d1a6093a61fe738110be5f03d7be7f83c827a19e31e6e2356d3a14",
-    "styles.css": "9bfd80757173481843e0e00e82e5c696527580d78f9d9a12b2b7e8b55389da22",
+    "styles.css": "c08e5197ebe47ffe2779d1c13659aede495b77ac470bc18c5fd1d63571d4773e",
     "favicon.svg": "7cfd85d797a554b14801cbc7211d81cd3bb13100d470baa1997906f38ad7c440",
-    "README.md": "9694c234fa51c439796e400b1e187636b643355a456130248c5876ded58229a0"
+    "README.md": "91c44528dea7ef82394c7f3763cfe2458544122e900c2c3ea997c65bda9281ea"
   }
 }

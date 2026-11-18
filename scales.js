@@ -1,4 +1,4 @@
-/* 同一轴固定情境；六类策略典型例子复用对应刻度的原文。 */
+/* 36 个刻度的名称、定义与示例直接对应当前 Figma 节点。 */
 window.COLMO_SCALES = {
   "embodiment": {
     "definition": "视觉形态与动作，从系统状态反馈转向生命体般的存在。",
@@ -10,27 +10,33 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "语音录入食材",
-          "definitionNodeId": "1883:8768"
+          "definitionNodeId": "2253:1581",
+          "exampleNodeId": "2238:2259",
+          "sourcePageId": "2238:2194"
         }
       ],
       [
         "表达性动效",
         "仍然没有脸或身体，但通过节律、弹性、速度、呼吸感体现轻微情绪或状态。",
-        "抽象圆环随输入轻缓伸缩，录入结束后收拢停稳。",
+        "现有形象随输入轻缓变化，录入结束后回归轻微呼吸。",
         {
           "kind": "同情境刻度对照示例",
           "scenario": "语音录入食材",
-          "definitionNodeId": "1883:8770"
+          "definitionNodeId": "2253:1582",
+          "exampleNodeId": "2238:2261",
+          "sourcePageId": "2238:2194"
         }
       ],
       [
         "拟生命动态",
         "抽象形态呈现注意、回应、呼吸等生命感；未形成固定角色。",
-        "抽象光团朝输入方向微微聚拢，等待输入时轻轻呼吸，录入结束后舒展回应。",
+        "现有形象以朝向变化表现注意，等待输入时保持轻微的呼吸节律，录入结束后作舒展回应。",
         {
           "kind": "同情境刻度对照示例",
           "scenario": "语音录入食材",
-          "definitionNodeId": "1883:8772"
+          "definitionNodeId": "2253:1583",
+          "exampleNodeId": "2238:2263",
+          "sourcePageId": "2238:2194"
         }
       ],
       [
@@ -40,7 +46,9 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "语音录入食材",
-          "definitionNodeId": "1883:8774"
+          "definitionNodeId": "2253:1584",
+          "exampleNodeId": "2238:2265",
+          "sourcePageId": "2238:2194"
         }
       ],
       [
@@ -50,12 +58,15 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "语音录入食材",
-          "definitionNodeId": "1883:8776"
+          "definitionNodeId": "2253:1585",
+          "exampleNodeId": "2238:2267",
+          "sourcePageId": "2238:2194"
         }
       ]
     ],
     "scenario": "语音录入食材",
-    "context": "用户正在用语音录入新放进冰箱的食材。"
+    "context": "用户正在用语音录入新放进冰箱的食材。",
+    "sourcePageId": "2238:2194"
   },
   "intensity": {
     "definition": "视觉、声音与动效的显著程度，即提示吸引注意力的强弱。",
@@ -67,7 +78,9 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "烤箱温度异常提醒",
-          "definitionNodeId": "1883:8799"
+          "definitionNodeId": "2253:1586",
+          "exampleNodeId": "2253:1496",
+          "sourcePageId": "2253:1399"
         }
       ],
       [
@@ -77,19 +90,21 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "烤箱温度异常提醒",
-          "definitionNodeId": "1883:8801"
+          "definitionNodeId": "2253:1587",
+          "exampleNodeId": "2253:1498",
+          "sourcePageId": "2253:1399"
         }
       ],
       [
         "明显",
         "主动提醒、推荐、服务建议时，节律、声音、动效明显增强，让用户知道 AI 在介入。",
-        "“烤箱温度异常，已经停机保护。请先暂停使用，温度还在核验中，有结果我再告诉你。” 页面突出异常与停机状态，先用一次清晰提示音引起注意，再平稳播报。",
+        "先突出异常与停机状态，用一次清晰提示音引起注意，再平稳播报：\n“烤箱温度异常，已经停机保护。请先暂停使用，温度还在核验中，有结果我再告诉你。”",
         {
           "kind": "同情境刻度对照示例",
           "scenario": "烤箱温度异常提醒",
-          "definitionNodeId": "1883:8803",
-          "strategy": "D",
-          "strategyExampleNodeId": "2125:1408"
+          "definitionNodeId": "2253:1588",
+          "exampleNodeId": "2253:1500",
+          "sourcePageId": "2253:1399"
         }
       ],
       [
@@ -99,13 +114,16 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "烤箱温度异常提醒",
-          "definitionNodeId": "1883:8805"
+          "definitionNodeId": "2253:1589",
+          "exampleNodeId": "2253:1502",
+          "sourcePageId": "2253:1399"
         }
       ]
     ],
     "scenario": "烤箱温度异常提醒",
     "context": "烤箱温度异常，已停机保护，温度仍在核验；用户需要暂停使用并等待结果。",
-    "comparisonNote": "对照同一异常中的提示强弱；具体采用哪档，仍须依据风险紧迫性和用户是否已察觉。"
+    "comparisonNote": "完整刻度用于比较提示强弱；COLMO 在 L1–L3 内随情境调整，L4 仅作上限之外的对照。",
+    "sourcePageId": "2253:1399"
   },
   "competence": {
     "definition": "通过依据、结构、术语与风险说明，让用户感受到专业性。",
@@ -117,44 +135,51 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "确认本餐需求",
-          "definitionNodeId": "1883:8942"
+          "definitionNodeId": "2253:1956",
+          "exampleNodeId": "2238:2437",
+          "sourcePageId": "2238:2374"
         }
       ],
       [
         "可靠",
         "给出明确答案和简单理由，表达可靠，但不刻意“专家化”。",
-        "“今晚三人用餐，六点开饭，少辣。还需要确认有没有忌口。”",
+        "“已确认三人用餐、六点开饭、少辣。还需确认忌口，才能排除不适合的食材。”",
         {
           "kind": "同情境刻度对照示例",
           "scenario": "确认本餐需求",
-          "definitionNodeId": "1883:8944"
+          "definitionNodeId": "2253:1957",
+          "exampleNodeId": "2238:2439",
+          "sourcePageId": "2238:2374"
         }
       ],
       [
         "专业",
         "结构清晰、判断有依据，使用领域术语，明确条件、风险与权衡。",
-        "“好的，今晚三人用餐，六点开饭，口味少辣，我记下了。有没有需要避开的食材？”",
+        "“三人用餐决定份量，六点开饭约束备餐时长；少辣是口味偏好，不能代替忌口确认。还有哪些食材需要排除？”",
         {
           "kind": "同情境刻度对照示例",
           "scenario": "确认本餐需求",
-          "definitionNodeId": "1883:8946",
-          "strategy": "A",
-          "strategyExampleNodeId": "2125:1399"
+          "definitionNodeId": "2253:1958",
+          "exampleNodeId": "2238:2441",
+          "sourcePageId": "2238:2374"
         }
       ],
       [
         "专家",
         "不仅回答，还以稳定方法论、专业术语、解释依据和品牌知识形成专业感。",
-        "页面按“已确认要求／待确认限制／对选菜的影响”列出人数、时间、口味与忌口；说明人数影响份量、开饭时间约束备餐时长，忌口确认后用于排除相关食材。",
+        "按“食材限制—份量—可用时间”说明筛选顺序：先排除忌口，再确定三人份量，按六点开饭倒推备餐时间；若时间不足，比较简化步骤或更换菜谱的取舍。",
         {
           "kind": "同情境刻度对照示例",
           "scenario": "确认本餐需求",
-          "definitionNodeId": "1883:8948"
+          "definitionNodeId": "2253:1959",
+          "exampleNodeId": "2238:2443",
+          "sourcePageId": "2238:2374"
         }
       ]
     ],
     "scenario": "确认本餐需求",
-    "context": "用户已说明今晚三人用餐、六点开饭、少辣；是否有需避开的食材尚未明确。"
+    "context": "用户已说明今晚三人用餐、六点开饭、少辣；是否有需避开的食材尚未明确。",
+    "sourcePageId": "2238:2374"
   },
   "warmth": {
     "definition": "回应中的关怀、共情和亲近程度，可与高专业感同时存在。",
@@ -166,19 +191,21 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "回顾本餐切配体验",
-          "definitionNodeId": "1883:8971"
+          "definitionNodeId": "2253:1960",
+          "exampleNodeId": "2253:1875",
+          "sourcePageId": "2253:1782"
         }
       ],
       [
         "适度关怀",
         "结合用户处境给予适度关心或肯定，保持管家关系分寸。",
-        "“这次切配比预计多用了十分钟。下次安排时间，要多留一点吗？”",
+        "“这次切配，步骤提示跟着做顺手吗？”",
         {
           "kind": "同情境刻度对照示例",
           "scenario": "回顾本餐切配体验",
-          "definitionNodeId": "1883:8973",
-          "strategy": "E",
-          "strategyExampleNodeId": "2125:1411"
+          "definitionNodeId": "2253:1961",
+          "exampleNodeId": "2253:1877",
+          "sourcePageId": "2253:1782"
         }
       ],
       [
@@ -188,7 +215,9 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "回顾本餐切配体验",
-          "definitionNodeId": "1883:8975"
+          "definitionNodeId": "2253:1962",
+          "exampleNodeId": "2253:1879",
+          "sourcePageId": "2253:1782"
         }
       ],
       [
@@ -198,12 +227,15 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "回顾本餐切配体验",
-          "definitionNodeId": "1883:8977"
+          "definitionNodeId": "2253:1963",
+          "exampleNodeId": "2253:1881",
+          "sourcePageId": "2253:1782"
         }
       ]
     ],
     "scenario": "回顾本餐切配体验",
-    "context": "本餐比预计晚十分钟，记录显示切配耗时增加；系统向用户了解这一步的体验。"
+    "context": "本餐比预计晚十分钟，记录显示切配耗时增加；系统向用户了解这一步的体验。",
+    "sourcePageId": "2253:1782"
   },
   "density": {
     "definition": "一次表达的信息量与展开程度，按信息范围和解释层次区分。",
@@ -215,7 +247,9 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "从切配接续到腌制",
-          "definitionNodeId": "1883:9000"
+          "definitionNodeId": "2253:2138",
+          "exampleNodeId": "2245:1704",
+          "sourcePageId": "2245:1581"
         }
       ],
       [
@@ -225,9 +259,9 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "从切配接续到腌制",
-          "definitionNodeId": "1883:9002",
-          "strategy": "C",
-          "strategyExampleNodeId": "2125:1405"
+          "definitionNodeId": "2253:2139",
+          "exampleNodeId": "2245:1706",
+          "sourcePageId": "2245:1581"
         }
       ],
       [
@@ -237,7 +271,9 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "从切配接续到腌制",
-          "definitionNodeId": "1883:9004"
+          "definitionNodeId": "2253:2140",
+          "exampleNodeId": "2245:1708",
+          "sourcePageId": "2245:1581"
         }
       ],
       [
@@ -247,12 +283,15 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "从切配接续到腌制",
-          "definitionNodeId": "1883:9006"
+          "definitionNodeId": "2253:2141",
+          "exampleNodeId": "2245:1710",
+          "sourcePageId": "2245:1581"
         }
       ]
     ],
     "scenario": "从切配接续到腌制",
-    "context": "当前菜谱的切配已完成，下一步为腌制；用户完成后需确认，系统再接续提醒。"
+    "context": "当前菜谱的切配已完成，下一步为腌制；用户完成后需确认，系统再接续提醒。",
+    "sourcePageId": "2245:1581"
   },
   "guidance": {
     "definition": "话术将用户导向具体选择或行动的力度，不代表系统的执行权限。",
@@ -264,7 +303,9 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "选择今晚的菜谱",
-          "definitionNodeId": "1883:9031"
+          "definitionNodeId": "2253:2142",
+          "exampleNodeId": "2253:2119",
+          "sourcePageId": "2253:1964"
         }
       ],
       [
@@ -274,7 +315,9 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "选择今晚的菜谱",
-          "definitionNodeId": "1883:9033"
+          "definitionNodeId": "2253:2143",
+          "exampleNodeId": "2253:2121",
+          "sourcePageId": "2253:1964"
         }
       ],
       [
@@ -284,9 +327,9 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "选择今晚的菜谱",
-          "definitionNodeId": "1883:9035",
-          "strategy": "B",
-          "strategyExampleNodeId": "2125:1402"
+          "definitionNodeId": "2253:2144",
+          "exampleNodeId": "2253:2123",
+          "sourcePageId": "2253:1964"
         }
       ],
       [
@@ -296,7 +339,9 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "选择今晚的菜谱",
-          "definitionNodeId": "1883:9037"
+          "definitionNodeId": "2253:2145",
+          "exampleNodeId": "2253:2125",
+          "sourcePageId": "2253:1964"
         }
       ],
       [
@@ -306,13 +351,16 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "选择今晚的菜谱",
-          "definitionNodeId": "1883:9039"
+          "definitionNodeId": "2253:2146",
+          "exampleNodeId": "2253:2127",
+          "sourcePageId": "2253:1964"
         }
       ]
     ],
     "scenario": "选择今晚的菜谱",
     "context": "用户希望省些时间；两样食材即将到期，炒饭可用上它们，汤品的准备时间更长。",
-    "comparisonNote": "对照同一选餐任务中的引导力度；日常选择宜保留选择空间，L5 用于展示强指令的差异。"
+    "comparisonNote": "对照同一选餐任务中的引导力度；日常选择宜保留选择空间，L5 用于展示强指令的差异。",
+    "sourcePageId": "2253:1964"
   },
   "threshold": {
     "definition": "没有明确请求时，达到多高的确定性、必要性或风险信号才出现。由内到外：L1 低阈值 → L4 高阈值。",
@@ -324,7 +372,9 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "冰箱开门后的食材提醒",
-          "definitionNodeId": "1883:8828"
+          "definitionNodeId": "2253:1772",
+          "exampleNodeId": "2245:1526",
+          "sourcePageId": "2245:1399"
         }
       ],
       [
@@ -334,7 +384,9 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "冰箱开门后的食材提醒",
-          "definitionNodeId": "1883:8830"
+          "definitionNodeId": "2253:1773",
+          "exampleNodeId": "2245:1528",
+          "sourcePageId": "2245:1399"
         }
       ],
       [
@@ -344,7 +396,9 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "冰箱开门后的食材提醒",
-          "definitionNodeId": "1883:8832"
+          "definitionNodeId": "2253:1774",
+          "exampleNodeId": "2245:1530",
+          "sourcePageId": "2245:1399"
         }
       ],
       [
@@ -354,12 +408,15 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "冰箱开门后的食材提醒",
-          "definitionNodeId": "1883:8834"
+          "definitionNodeId": "2253:1775",
+          "exampleNodeId": "2245:1532",
+          "sourcePageId": "2245:1399"
         }
       ]
     ],
     "scenario": "冰箱开门后的食材提醒",
-    "context": "用户打开冰箱，尚未提出请求；系统有牛奶日期记录，是否主动出现取决于触发门槛。"
+    "context": "用户打开冰箱，尚未提出请求；系统有牛奶日期记录，是否主动出现取决于触发门槛。",
+    "sourcePageId": "2245:1399"
   },
   "depth": {
     "definition": "一次介入实际推进到哪一步。本次深度不得超过已授权上限。",
@@ -371,7 +428,9 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "调整家庭晚餐的切配提醒",
-          "definitionNodeId": "1883:8861"
+          "definitionNodeId": "2253:1776",
+          "exampleNodeId": "2253:1751",
+          "sourcePageId": "2253:1590"
         }
       ],
       [
@@ -381,7 +440,9 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "调整家庭晚餐的切配提醒",
-          "definitionNodeId": "1883:8863"
+          "definitionNodeId": "2253:1777",
+          "exampleNodeId": "2253:1753",
+          "sourcePageId": "2253:1590"
         }
       ],
       [
@@ -391,29 +452,33 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "调整家庭晚餐的切配提醒",
-          "definitionNodeId": "1883:8865"
+          "definitionNodeId": "2253:1778",
+          "exampleNodeId": "2253:1755",
+          "sourcePageId": "2253:1590"
         }
       ],
       [
         "协商确认",
         "明确提出操作内容与影响，取得用户确认后执行。",
-        "“我留意到，你最近几次都把切配提醒提前了。以后家庭晚餐的提醒，要不要默认提前十分钟？用着不合适，随时可以改回来。” 用户确认后保存，并反馈生效范围。",
+        "依据｜展示近期手动调整记录与前后对照。\n询问｜“以后家庭晚餐的切配提醒，都提前十分钟，可以吗？”\n确认后｜保存并核验生效，显示“已提前十分钟”，提供“恢复原设置”。",
         {
           "kind": "同情境刻度对照示例",
           "scenario": "调整家庭晚餐的切配提醒",
-          "definitionNodeId": "1883:8867",
-          "strategy": "F",
-          "strategyExampleNodeId": "2125:1414"
+          "definitionNodeId": "2253:1779",
+          "exampleNodeId": "2253:1757",
+          "sourcePageId": "2253:1590"
         }
       ],
       [
         "主动执行",
         "在已授权规则内直接执行并反馈；包括确定的日常调节，以及风险确认后的必要保护动作。",
-        "已有对应规则调整授权时，直接保存并反馈：“家庭晚餐的切配提醒已默认提前十分钟，随时可以改回来。”",
+        "已有对应规则调整授权时，直接保存并反馈：\n“家庭晚餐的切配提醒已默认提前十分钟，随时可以改回来。”",
         {
           "kind": "同情境刻度对照示例",
           "scenario": "调整家庭晚餐的切配提醒",
-          "definitionNodeId": "1883:8869"
+          "definitionNodeId": "2253:1780",
+          "exampleNodeId": "2253:1759",
+          "sourcePageId": "2253:1590"
         }
       ],
       [
@@ -423,11 +488,14 @@ window.COLMO_SCALES = {
         {
           "kind": "同情境刻度对照示例",
           "scenario": "调整家庭晚餐的切配提醒",
-          "definitionNodeId": "1883:8871"
+          "definitionNodeId": "2253:1781",
+          "exampleNodeId": "2253:1761",
+          "sourcePageId": "2253:1590"
         }
       ]
     ],
     "scenario": "调整家庭晚餐的切配提醒",
-    "context": "最近几次家庭晚餐中，用户都将切配提醒提前十分钟；拟把该调整设为后续默认规则。"
+    "context": "最近几次家庭晚餐中，用户都将切配提醒提前十分钟；拟把该调整设为后续默认规则。",
+    "sourcePageId": "2253:1590"
   }
 };
