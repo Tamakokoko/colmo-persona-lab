@@ -9,7 +9,7 @@
   const risks=catalog.strategies.D.riskLevels;
   let activeRisk='lowRisk';
   let expressionView='personality';
-  const defaults = {version:3,catalogRevision:"20261118-routine-boundaries",baseline:clone(catalog.baseline),strategies:Object.fromEntries(Object.entries(catalog.strategies).map(([key,s]) => [key, key === 'D' ? {low:[...s.low],high:[...s.high],...Object.fromEntries(riskKeys.map(k=>[k,[...risks[k].values]]))} : {values:[...s.values]}]))};
+  const defaults = {version:3,catalogRevision:"20261119-trust-threshold",baseline:clone(catalog.baseline),strategies:Object.fromEntries(Object.entries(catalog.strategies).map(([key,s]) => [key, key === 'D' ? {low:[...s.low],high:[...s.high],...Object.fromEntries(riskKeys.map(k=>[k,[...risks[k].values]]))} : {values:[...s.values]}]))};
   const $ = id => document.getElementById(id);
   const STORAGE_KEY = 'colmo-persona-lab-v3';
   const LEGACY_STORAGE_KEY = 'colmo-persona-lab-v1';
@@ -40,7 +40,15 @@
         }
         data.version = 2;
       }
-      data.baseline = clone(defaults.baseline);
+      // Preserve recent report drafts and their unrelated edits; widen only the threshold boundary.
+      if (!['20261118-routine-boundaries','20261118-professional-cap'].includes(data.catalogRevision)) data.baseline = clone(defaults.baseline);
+      data.baseline.low[6] = 2;
+      data.baseline.high[6] = 4;
+      for (const field of ['low','center','high']) data.baseline[field][2] = Math.min(data.baseline[field][2],3);
+      const riskDraft = data.strategies.D;
+      if (riskDraft) for (const field of ['low','high',...riskKeys]) {
+        if (Array.isArray(riskDraft[field])) riskDraft[field][2] = Math.min(riskDraft[field][2],3);
+      }
       for (const [key, strategy] of Object.entries(data.strategies)) {
         if (key !== 'D' && Array.isArray(strategy.values))
           strategy.values = strategy.values.map((v,i) => clamp(v,data.baseline.low[i],data.baseline.high[i]));
@@ -48,6 +56,7 @@
     }
     const check = values => {if(!Array.isArray(values)||values.length!==8||values.some((v,i)=>!Number.isInteger(v)||v<axes[i].min||v>axes[i].max))throw new Error('参数必须是八个有效的整数刻度。');};
     for(const field of ['center','low','high']) check(data.baseline[field]);
+    if(data.baseline.high[2]>3)throw new Error('COLMO 专业感上限为 L3 专业，不扩展至专家层级。');
     for(let i=0;i<8;i++)if(data.baseline.low[i]>data.baseline.center[i]||data.baseline.center[i]>data.baseline.high[i])throw new Error('原型参照线必须位于允许范围内。');
     for(const key of Object.keys(catalog.strategies)) {
       const s=data.strategies[key];if(!s)throw new Error('参数缺少策略 '+key+'。');
@@ -70,7 +79,7 @@
     const riskState={low:[...data.strategies.D.low],high:[...data.strategies.D.high]};
     for(const k of riskKeys){const values=data.version===3?data.strategies.D[k]:risks[k].values.map((v,i)=>clamp(v,riskState.low[i],riskState.high[i]));check(values);if(values.some((v,i)=>v<catalog.riskBoundary.low[i]||v>catalog.riskBoundary.high[i]))throw new Error('风险等级超出独立风险策略范围。');riskState[k]=[...values];}
     for(let i=0;i<8;i++){riskState.low[i]=Math.min(...riskKeys.map(k=>riskState[k][i]));riskState.high[i]=Math.max(...riskKeys.map(k=>riskState[k][i]));}
-    return {version:3,catalogRevision:"20261118-routine-boundaries",baseline:{center:[...data.baseline.center],low:[...data.baseline.low],high:[...data.baseline.high]},strategies:Object.fromEntries(Object.keys(catalog.strategies).map(key=>[key,key==='D'?riskState:{values:[...data.strategies[key].values]}]))};
+    return {version:3,catalogRevision:"20261119-trust-threshold",baseline:{center:[...data.baseline.center],low:[...data.baseline.low],high:[...data.baseline.high]},strategies:Object.fromEntries(Object.keys(catalog.strategies).map(key=>[key,key==='D'?riskState:{values:[...data.strategies[key].values]}]))};
   }
   let loadMessage='';
   try {const cached=localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem('colmo-persona-lab-v2') ?? localStorage.getItem(LEGACY_STORAGE_KEY);if(cached){
@@ -80,7 +89,7 @@
     const priorDefaults=[defaults,previousDefault,oldDefault,olderDefault].map(d=>{const prior=clone(d);prior.strategies.C.values[5]=3;return prior;});
     const oldWarmthDefaults=[defaults,previousDefault,oldDefault,olderDefault,...priorDefaults].map(d=>{const old=clone(d);delete old.catalogRevision;old.strategies.A.values[3]=2;return old;});
     state=[previousDefault,oldDefault,olderDefault,...priorDefaults,...oldWarmthDefaults].some(d=>JSON.stringify(parsed)===JSON.stringify(d))?clone(defaults):validate(parsed);
-    if(parsed.catalogRevision!==defaults.catalogRevision)loadMessage='已按汇报修改同步常规边界；风险策略单独保留，不计入常规范围。';
+    if(parsed.catalogRevision!==defaults.catalogRevision)loadMessage='主动介入阈值已更新为中低—高阈值，支持随长期信任与习惯积累调整；其余近期草稿参数保留。';
     if(!parsed.catalogRevision&&state.strategies.A.values[3]===2&&state.baseline.low[3]<=1){state.strategies.A.values[3]=1;loadMessage='A 类表达温度已更新为 L1 平实礼貌，其余草稿参数保留。';}
   }}catch(e){loadMessage='未能读取本机草稿，已载入默认值。';}
   function save() { clearTimeout(saveTimer);$('saveState').textContent='正在保存…';saveTimer=setTimeout(()=>{try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));$('saveState').textContent='已保存至本机';}catch(e){storageAvailable=false;$('saveState').textContent='请导出保存';$('storageNote').textContent='浏览器存储不可用，请导出参数';}},250); }

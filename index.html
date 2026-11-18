@@ -7,14 +7,14 @@
   <meta name="description" content="COLMO 八维人格与六类 AI 表达策略的交互式工作坊。">
   <title>COLMO · 人格表达实验台</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=20261118-boundary-ui">
-  <script defer src="data.js?v=20261118-boundary-ui"></script>
+  <link rel="stylesheet" href="styles.css?v=20261119-trust-threshold">
+  <script defer src="data.js?v=20261119-trust-threshold"></script>
   <script defer src="scales.js?v=20261105-intensity-max-l3"></script>
   <script defer src="principles.js?v=20261106-persona-neutral"></script>
   <script defer src="cases.js?v=20261030-original-definitions"></script>
   <script defer src="case-assets.js?v=20261030-original-definitions"></script>
   <script defer src="case-ui.js?v=20261030-original-definitions"></script>
-  <script defer src="app.js?v=20261118-boundary-ui"></script>
+  <script defer src="app.js?v=20261119-trust-threshold"></script>
 </head>
 <body>
   <header class="topbar">
@@ -44,7 +44,7 @@
       <div class="chart-column">
         <section class="panel chart-panel" aria-labelledby="chartHeading">
           <div class="panel-head"><div><h2 id="chartHeading">八维人格定位</h2></div><button id="caseReferenceButton" class="case-reference-button" aria-haspopup="dialog" aria-controls="caseDialog">案例参考 <span aria-hidden="true">↗</span></button></div>
-          <div class="chart-options"><div class="boundary-control"><label class="switch"><input type="checkbox" id="envelopeToggle" checked aria-describedby="boundaryDefinition"><span></span>常规允许范围</label><button type="button" class="boundary-help" aria-label="查看常规允许范围说明" aria-describedby="boundaryDefinition">?</button><div id="boundaryDefinition" class="boundary-tooltip" role="tooltip"><strong>什么是常规允许范围？</strong><p>排除极端风险状况后，COLMO AI 管家在日常服务中各表达维度允许调整的上下界。具体表达可随任务与用户状态在区间内变化，以保持角色一致；它不是固定的人格中心值。D 类风险策略独立展示，不用于扩大常规边界。</p></div></div></div>
+          <div class="chart-options"><div class="boundary-control"><label class="switch"><input type="checkbox" id="envelopeToggle" checked aria-describedby="boundaryDefinition"><span></span>常规允许范围</label><button type="button" class="boundary-help" aria-label="查看常规允许范围说明" aria-describedby="boundaryDefinition">?</button><div id="boundaryDefinition" class="boundary-tooltip" role="tooltip"><strong>什么是常规允许范围？</strong><p>排除极端风险状况后，COLMO AI 管家在日常服务中各表达维度允许调整的上下界。具体表达可随任务、用户状态及长期信任与习惯积累在区间内变化，以保持角色一致；它不是固定的人格中心值。D 类风险策略独立展示，不用于扩大常规边界。</p></div></div></div>
           <p class="small boundary-scope">排除极端风险状况，只考虑常规状态下的人格表达边界。D 类风险策略单独展示。</p>
           <div class="radar-wrap"><svg id="radar" viewBox="0 0 640 590" role="group" aria-labelledby="radarTitle radarDescription"><title id="radarTitle">八维人格表达雷达图</title><desc id="radarDescription"></desc><g id="rangeLayer"></g><g id="gridLayer"></g><g id="baselineLayer"></g><g id="activeLayer"></g><g id="labelLayer"></g></svg></div>
           <div id="detailLegend" class="legend"><span><i class="key-active"></i><b id="activeLegend">当前策略</b></span><span id="bandLegend" hidden><i class="key-band"></i>策略上下限</span></div>
